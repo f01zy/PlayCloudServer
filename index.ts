@@ -17,10 +17,6 @@ export const app = express()
 app.use(fileUpload())
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({
-  credentials: true,
-  origin: Variables.CLIENT_URL
-}))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use("/api", router)
 app.use(errorMiddleware)
