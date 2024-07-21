@@ -22,8 +22,7 @@
         "DELETE",
         "OPTIONS"
       ],
-      "headers": "*",
-      "allowCredentials": true
+      "headers": "*"
     }
   ]
 }
