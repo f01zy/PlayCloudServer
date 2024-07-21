@@ -12,7 +12,7 @@ import { Variables } from "./env/variables.env"
 import path from "path"
 import fileUpload from "express-fileupload"
 
-const app = express()
+export const app = express()
 
 app.use(fileUpload())
 app.use(express.json())
@@ -41,5 +41,3 @@ const start = async () => {
 }
 
 start()
-
-export default app
