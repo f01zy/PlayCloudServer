@@ -21,7 +21,7 @@ app.use(cors({
   credentials: true,
   origin: Variables.CLIENT_URL
 }))
-app.use(express.static(path.join(__dirname, 'static')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use("/api", router)
 app.use(errorMiddleware)
 
