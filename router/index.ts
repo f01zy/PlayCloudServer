@@ -14,13 +14,12 @@ router.post("/auth/register",
   userController.register
 )
 router.post("/auth/login", userController.login)
-router.post("/auth/logout", userController.logout)
+router.get("/auth/logout", userController.logout)
 router.get("/auth/activate/:link", userController.activate)
 router.get("/auth/refresh", userController.refresh)
 
-router.post("/user/history", userController.addToHistory)
-
+router.get("/music/:id", musicController.getOneMusic)
+router.post("/music/listen", musicController.listen)
 router.post("/music", musicController.create)
 router.delete("/music", musicController.delete)
 router.get("/music", musicController.getAllMusic)
-router.get("/music/:id", musicController.getOneMusic)

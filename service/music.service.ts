@@ -7,6 +7,8 @@ import path from "path"
 import fs from "fs"
 import { UserService } from "./user.service"
 import { UserDto } from "../dtos/user.dto"
+import { Document, Schema } from "mongoose"
+import { IMusic } from "../interfaces/music.interface"
 
 const tokenService = new TokenService()
 const userService = new UserService()
@@ -45,5 +47,37 @@ export class MusicService {
     } catch (error) {
       throw ApiError.BadRequest("Музыки с таким id не существует")
     }
+  }
+
+  public async listen(refreshToken: string, musicId: Schema.Types.ObjectId) {
+    const user = await tokenService.getUserByRefreshToken(refreshToken)
+    const music = await musicModel.findById(musicId)
+    if (!music) {
+      throw ApiError.BadRequest("Музыки с таким id не существует")
+    }
+    if (music.listening.indexOf(user.id) === -1) {
+      music.listening.push(user.id)
+    }
+    music.save()
+
+    const history = user.history.filter(historyMusic => historyMusic != musicId)
+    history.unshift(musicId)
+    const newUser = await userModel.findOneAndUpdate(
+      { _id: user._id, __v: user.__v },
+      { $set: { history } },
+      { new: true, runValidators: true }
+    )
+
+    if (!newUser) {
+      throw ApiError.BadRequest("Неверный запрос")
+    }
+
+    return new UserDto(await userService.populate(newUser))
+  }
+
+  public async populate(music: Document<unknown, {}, IMusic> & IMusic) {
+    return await music.populate([
+      { path: "author" }
+    ])
   }
 }

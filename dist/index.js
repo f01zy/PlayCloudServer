@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.app = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const error_middleware_1 = __importDefault(require("./middlewares/error.middleware"));
@@ -24,18 +25,18 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const variables_env_1 = require("./env/variables.env");
 const path_1 = __importDefault(require("path"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
-const app = (0, express_1.default)();
-app.use((0, express_fileupload_1.default)());
-app.use(express_1.default.json());
-app.use((0, cookie_parser_1.default)());
-app.use((0, cors_1.default)({
+exports.app = (0, express_1.default)();
+exports.app.use((0, express_fileupload_1.default)());
+exports.app.use(express_1.default.json());
+exports.app.use((0, cookie_parser_1.default)());
+exports.app.use((0, cors_1.default)({
     credentials: true,
     origin: variables_env_1.Variables.CLIENT_URL
 }));
-app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
-app.use("/api", router_1.router);
-app.use(error_middleware_1.default);
-const server = http_1.default.createServer(app);
+exports.app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
+exports.app.use("/api", router_1.router);
+exports.app.use(error_middleware_1.default);
+const server = http_1.default.createServer(exports.app);
 const PORT = variables_env_1.Variables.PORT;
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {

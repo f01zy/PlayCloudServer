@@ -14,13 +14,14 @@ import fileUpload from "express-fileupload"
 
 export const app = express()
 
+app.use(cors({
+  credentials: true,
+  origin: Variables.MODE == "development" ? Variables.CLIENT_DEVELOPMENT_URL : Variables.CLIENT_PRODUCTION_URL
+}))
 app.use(fileUpload())
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({
-  credentials: true,
-}))
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'static')))
 app.use("/api", router)
 app.use(errorMiddleware)
 
@@ -32,10 +33,10 @@ const start = async () => {
     await mongoose.connect(Variables.DATABASE_URL)
 
     server.listen(PORT, () => {
-      console.log(`[LOG] PlayCloud started in ${Variables.MODE} mode`);
+      console.log(`[INFO] server started in ${Variables.MODE} mode`);
     })
   } catch (e) {
-    console.log(e);
+    throw new Error(e as string)
   }
 }
 

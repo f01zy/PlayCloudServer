@@ -93,23 +93,6 @@ export class UserService {
     }
   }
 
-  public async addToHistory(music: Schema.Types.ObjectId, refreshToken: string) {
-    const user = await tokenService.getUserByRefreshToken(refreshToken)
-    const history = user.history.filter(historyMusic => historyMusic != music)
-    history.unshift(music)
-    const newUser = await userModel.findOneAndUpdate(
-      { _id: user._id, __v: user.__v },
-      { $set: { history } },
-      { new: true, runValidators: true }
-    )
-
-    if (!newUser) {
-      throw ApiError.BadRequest("Неверный запрос")
-    }
-
-    return new UserDto(await this.populate(newUser))
-  }
-
   public async populate(user: Document<unknown, {}, IUser> & IUser) {
     return await user.populate([
       { path: "music", populate: "author" },

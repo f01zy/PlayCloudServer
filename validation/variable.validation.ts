@@ -1,6 +1,6 @@
 import { cleanEnv, str, port, email } from "envalid"
 
-export const validate = (): void => {
+export const validate = () => {
   cleanEnv(process.env, {
     MODE: str({
       choices: ['development', 'production'],

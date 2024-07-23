@@ -3,17 +3,15 @@ import { ApiError } from "../exceptions/api.exception";
 import { MusicService } from "../service/music.service";
 import { UploadedFile } from "express-fileupload"
 import { musicModel } from "../models/music.model";
+import { Document, Schema } from "mongoose";
+import { IMusic } from "../interfaces/music.interface";
 
 interface RequestBodyCreate {
   name: string,
   refreshToken: string
 }
 
-interface RequestBodyDelete {
-  id: string,
-}
-
-interface RequestBodyGet {
+interface RequestBodyId {
   id: string,
 }
 
@@ -41,7 +39,7 @@ export class MusicController {
     }
   }
 
-  public async delete(req: Request<{}, {}, RequestBodyDelete>, res: Response, next: Function) {
+  public async delete(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
     try {
       const id = req.body.id
       const { refreshToken } = req.cookies
@@ -56,7 +54,7 @@ export class MusicController {
     }
   }
 
-  public async getOneMusic(req: Request<RequestBodyGet, {}, {}>, res: Response, next: Function) {
+  public async getOneMusic(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
     try {
       const id = req.params.id
 
@@ -66,7 +64,7 @@ export class MusicController {
 
       if (!music) return next(ApiError.BadRequest("Песни с указанным id не существует"))
 
-      return res.json(music)
+      return res.json(await musicService.populate(music))
     } catch (e) {
       next(e)
     }
@@ -75,8 +73,30 @@ export class MusicController {
   public async getAllMusic(req: Request, res: Response, next: Function) {
     try {
       const music = await musicModel.find()
+      const musicPopulate: Array<Document<unknown, {}, IMusic>> = []
+
+      for (const musicOnePopulate of music) {
+        musicPopulate.push(await musicService.populate(musicOnePopulate))
+      }
 
       return res.json(music)
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  public async listen(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
+    try {
+      const { id } = req.body
+      const { refreshToken } = req.cookies
+
+      if (!id) {
+        throw ApiError.BadRequest("id песни не был указан")
+      }
+
+      const user = await musicService.listen(refreshToken, id as unknown as Schema.Types.ObjectId)
+
+      return res.json(user)
     } catch (e) {
       next(e)
     }

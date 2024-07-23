@@ -3,15 +3,12 @@ import { UserService } from "../service/user.service"
 import { validationResult } from "express-validator"
 import { Request, Response } from "express"
 import { Schema } from "mongoose";
+import { Variables } from "../env/variables.env";
 
 interface IAuthRequestBody {
   username: string;
   email: string;
   password: string;
-}
-
-interface IAddToHistory {
-  music: string
 }
 
 const userService = new UserService()
@@ -27,7 +24,7 @@ export class UserController {
 
       const { username, email, password } = req.body
       const userData = await userService.register(username, email, password)
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: true })
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : true })
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -38,7 +35,7 @@ export class UserController {
     try {
       const { email, password } = req.body
       const userData = await userService.login(email, password)
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: true })
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : true })
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -71,19 +68,8 @@ export class UserController {
     try {
       const { refreshToken } = req.cookies
       const userData = await userService.refresh(refreshToken)
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: true })
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : true })
       return res.json(userData)
-    } catch (e) {
-      next(e)
-    }
-  }
-
-  public async addToHistory(req: Request<{}, {}, IAddToHistory>, res: Response, next: Function) {
-    try {
-      const { refreshToken } = req.cookies
-      const { music } = req.body
-      const user = await userService.addToHistory(music as unknown as Schema.Types.ObjectId, refreshToken)
-      return res.json(user)
     } catch (e) {
       next(e)
     }
