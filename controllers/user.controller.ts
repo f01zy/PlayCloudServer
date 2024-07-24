@@ -24,7 +24,7 @@ export class UserController {
 
       const { username, email, password } = req.body
       const userData = await userService.register(username, email, password)
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : true })
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : false })
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -35,7 +35,7 @@ export class UserController {
     try {
       const { email, password } = req.body
       const userData = await userService.login(email, password)
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : true })
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : false })
       return res.json(userData)
     } catch (e) {
       next(e)
@@ -68,7 +68,7 @@ export class UserController {
     try {
       const { refreshToken } = req.cookies
       const userData = await userService.refresh(refreshToken)
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : true })
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : false })
       return res.json(userData)
     } catch (e) {
       next(e)
