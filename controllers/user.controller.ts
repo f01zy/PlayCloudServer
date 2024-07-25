@@ -82,13 +82,17 @@ export class UserController {
   }
 
   public async getUserById(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
-    const { id } = req.params
-    const user = await userModel.findById(id)
+    try {
+      const { id } = req.params
+      const user = await userModel.findById(id)
 
-    if (!user) {
-      throw ApiError.BadRequest("Пользователя с таким id не существует")
+      if (!user) {
+        throw ApiError.BadRequest("Пользователя с таким id не существует")
+      }
+
+      return res.json(new UserDto(await userService.populate(user)))
+    } catch (e) {
+      next(e)
     }
-
-    return res.json(new UserDto(await userService.populate(user)))
   }
 }
