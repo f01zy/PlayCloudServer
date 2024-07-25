@@ -105,19 +105,23 @@ export class MusicController {
   }
 
   public async like(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
-    const { id } = req.body
-    const { refreshToken } = req.cookies
+    try {
+      const { id } = req.body
+      const { refreshToken } = req.cookies
 
-    const user = await tokenService.getUserByRefreshToken(refreshToken)
-    const music = await musicModel.findById(id)
+      const user = await tokenService.getUserByRefreshToken(refreshToken)
+      const music = await musicModel.findById(id)
 
-    if (!music) {
-      throw ApiError.BadRequest("Песни с таким id не существует")
+      if (!music) {
+        throw ApiError.BadRequest("Песни с таким id не существует")
+      }
+
+      music.liked.indexOf(user.id) ? music.liked = music.liked.filter(userS => userS != user.id) : music.liked.push(user.id)
+      music.save()
+
+      return res.json(await musicService.populate(music))
+    } catch (e) {
+      next(e)
     }
-
-    music.liked.indexOf(user.id) ? music.liked = music.liked.filter(userS => userS != user.id) : music.liked.push(user.id)
-    music.save()
-
-    return res.json(await musicService.populate(music))
   }
 }
