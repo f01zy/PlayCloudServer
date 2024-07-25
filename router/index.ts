@@ -18,6 +18,8 @@ router.get("/auth/logout", userController.logout)
 router.get("/auth/activate/:link", userController.activate)
 router.get("/auth/refresh", userController.refresh)
 
+router.get("/users/:id", userController.getUserById)
+
 router.get("/music/:id", musicController.getOneMusic)
 router.post("/music/listen", musicController.listen)
 router.post("/music", musicController.create)

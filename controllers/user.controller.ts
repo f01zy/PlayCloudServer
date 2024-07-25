@@ -4,11 +4,17 @@ import { validationResult } from "express-validator"
 import { Request, Response } from "express"
 import { Schema } from "mongoose";
 import { Variables } from "../env/variables.env";
+import { userModel } from "../models/user.model";
+import { UserDto } from "../dtos/user.dto";
 
 interface IAuthRequestBody {
   username: string;
   email: string;
   password: string;
+}
+
+interface RequestBodyId {
+  id: string,
 }
 
 const userService = new UserService()
@@ -73,5 +79,16 @@ export class UserController {
     } catch (e) {
       next(e)
     }
+  }
+
+  public async getUserById(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
+    const { id } = req.params
+    const user = await userModel.findById(id)
+
+    if (!user) {
+      throw ApiError.BadRequest("Пользователя с таким id не существует")
+    }
+
+    return res.json(new UserDto(await userService.populate(user)))
   }
 }
