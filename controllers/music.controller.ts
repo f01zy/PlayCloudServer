@@ -115,9 +115,9 @@ export class MusicController {
       throw ApiError.BadRequest("Песни с таким id не существует")
     }
 
-    music.likes.indexOf(user.id) ? delete music.likes[user.id] : music.likes.push(user.id)
+    music.liked.indexOf(user.id) ? delete music.liked[user.id] : music.liked.push(user.id)
     music.save()
 
-    return res.json(music)
+    return res.json(await musicService.populate(music))
   }
 }
