@@ -5,6 +5,7 @@ import { UploadedFile } from "express-fileupload"
 import { musicModel } from "../models/music.model";
 import { Document, Schema } from "mongoose";
 import { IMusic } from "../interfaces/music.interface";
+import { TokenService } from "../service/token.service";
 
 interface RequestBodyCreate {
   name: string,
@@ -16,6 +17,7 @@ interface RequestBodyId {
 }
 
 const musicService = new MusicService()
+const tokenService = new TokenService()
 
 export class MusicController {
   public async create(req: Request<{}, {}, RequestBodyCreate>, res: Response, next: Function) {
@@ -100,5 +102,22 @@ export class MusicController {
     } catch (e) {
       next(e)
     }
+  }
+
+  public async like(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
+    const { id } = req.body
+    const { refreshToken } = req.cookies
+
+    const user = await tokenService.getUserByRefreshToken(refreshToken)
+    const music = await musicModel.findById(id)
+
+    if (!music) {
+      throw ApiError.BadRequest("Песни с таким id не существует")
+    }
+
+    music.likes.indexOf(user.id) ? delete music.likes[user.id] : music.likes.push(user.id)
+    music.save()
+
+    return res.json(music)
   }
 }

@@ -22,6 +22,7 @@ router.get("/users/:id", userController.getUserById)
 
 router.get("/music/:id", musicController.getOneMusic)
 router.post("/music/listen", musicController.listen)
+router.post("/music/like", musicController.like)
 router.post("/music", musicController.create)
 router.delete("/music", musicController.delete)
 router.get("/music", musicController.getAllMusic)
