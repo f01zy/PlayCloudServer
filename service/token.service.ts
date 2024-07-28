@@ -7,8 +7,8 @@ import { userModel } from "../models/user.model"
 export class TokenService {
   public async validateRefresh(token: string) {
     try {
-      const userId = jwt.verify(token, Variables.JWT_REFRESH_SECRET)
-      const user = await userModel.findById(userId)
+      const userToken = jwt.verify(token, Variables.JWT_REFRESH_SECRET) as { id: string }
+      const user = await userModel.findById(userToken.id)
 
       return user
     } catch (e) {
@@ -16,11 +16,9 @@ export class TokenService {
     }
   }
 
-  public async generateTokens(payload: string) {
-    console.log(payload)
-
-    const accessToken = jwt.sign(payload, Variables.JWT_ACCESS_SECRET, { expiresIn: "30m" })
-    const refreshToken = jwt.sign(payload, Variables.JWT_REFRESH_SECRET, { expiresIn: "30d" })
+  public async generateTokens(id: string) {
+    const accessToken = jwt.sign({ id }, Variables.JWT_ACCESS_SECRET, { expiresIn: "30m" })
+    const refreshToken = jwt.sign({ id }, Variables.JWT_REFRESH_SECRET, { expiresIn: "30d" })
 
     return {
       accessToken,
