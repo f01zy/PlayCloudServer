@@ -4,7 +4,7 @@ import { TokenService } from "./token.service"
 import { ApiError } from "../exceptions/api.exception"
 import bcrypt from "bcrypt"
 import { UserDto } from "../dtos/user.dto"
-import { Document, Schema } from "mongoose"
+import { Document } from "mongoose"
 import { IUser } from "../interfaces/user.interface"
 
 const mailService = new MailService()
@@ -29,15 +29,12 @@ export class UserService {
 
     const user = await userModel.create({ username, email, password: hashPassword, activationLink })
 
-    // await mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`)
-
-    const dto = new UserDto(await this.populate(user))
-    const tokens = await tokenService.generateTokens({ ...dto })
-    await tokenService.saveToken(dto._id, tokens.refreshToken)
+    const tokens = await tokenService.generateTokens(user.id)
+    await tokenService.saveToken(user.id, tokens.refreshToken)
 
     return {
       ...tokens,
-      user: dto
+      user: new UserDto(await this.populate(user))
     }
   }
 
@@ -54,13 +51,12 @@ export class UserService {
       throw ApiError.BadRequest("Неверный пароль")
     }
 
-    const dto = new UserDto(await this.populate(user))
-    const tokens = await tokenService.generateTokens({ ...dto })
-    await tokenService.saveToken(dto._id, tokens.refreshToken)
+    const tokens = await tokenService.generateTokens(user.id)
+    await tokenService.saveToken(user.id, tokens.refreshToken)
 
     return {
       ...tokens,
-      user: dto
+      user: new UserDto(await this.populate(user))
     }
   }
 
@@ -83,13 +79,12 @@ export class UserService {
   public async refresh(refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
 
-    const dto = new UserDto(await this.populate(user))
-    const tokens = await tokenService.generateTokens({ ...dto })
-    await tokenService.saveToken(dto._id, tokens.refreshToken)
+    const tokens = await tokenService.generateTokens(user.id)
+    await tokenService.saveToken(user.id, tokens.refreshToken)
 
     return {
       ...tokens,
-      user: dto,
+      user: new UserDto(await this.populate(user))
     }
   }
 

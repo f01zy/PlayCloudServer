@@ -1,31 +1,22 @@
 import jwt from "jsonwebtoken"
 import { tokenModel } from "../models/token.model"
-import { IUser } from "../interfaces/user.interface"
-import { Document } from "mongoose"
 import { Variables } from "../env/variables.env"
 import { ApiError } from "../exceptions/api.exception"
 import { userModel } from "../models/user.model"
 
 export class TokenService {
-  public validateAccess(token: string) {
+  public async validateRefresh(token: string) {
     try {
-      const userData = jwt.verify(token, Variables.JWT_ACCESS_SECRET)
-      return userData
+      const userId = jwt.verify(token, Variables.JWT_REFRESH_SECRET)
+      const user = await userModel.findById(userId)
+
+      return user
     } catch (e) {
       return null
     }
   }
 
-  public validateRefresh(token: string): Document<unknown, {}, IUser> & IUser | null {
-    try {
-      const userData = jwt.verify(token, Variables.JWT_REFRESH_SECRET)
-      return userData as Document<unknown, {}, IUser> & IUser
-    } catch (e) {
-      return null
-    }
-  }
-
-  public async generateTokens(payload: string | Omit<IUser, "activationLink" | "password">) {
+  public async generateTokens(payload: string) {
     const accessToken = jwt.sign(payload, Variables.JWT_ACCESS_SECRET, { expiresIn: "30m" })
     const refreshToken = jwt.sign(payload, Variables.JWT_REFRESH_SECRET, { expiresIn: "30d" })
 
@@ -36,17 +27,17 @@ export class TokenService {
   }
 
   public async saveToken(userId: string, refreshToken: string) {
-    const tokenData = await tokenModel.findOne({ user: userId })
+    const token = await tokenModel.findOne({ user: userId })
 
-    if (tokenData) {
-      tokenData.refreshToken = refreshToken
+    if (token) {
+      token.refreshToken = refreshToken
 
-      return tokenData.save()
+      return token.save()
     }
 
-    const token = await tokenModel.create({ user: userId, refreshToken })
+    const tokenCreated = await tokenModel.create({ user: userId, refreshToken })
 
-    return token
+    return tokenCreated
   }
 
   public async removeToken(refreshToken: string) {
@@ -64,7 +55,7 @@ export class TokenService {
       throw ApiError.UnauthorizedError()
     }
 
-    const userData = this.validateRefresh(refreshToken)
+    const userData = await this.validateRefresh(refreshToken)
     const tokenDb = await this.findToken(refreshToken)
 
     if (!tokenDb || !userData) {
