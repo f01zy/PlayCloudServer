@@ -17,6 +17,8 @@ export class TokenService {
   }
 
   public async generateTokens(payload: string) {
+    console.log(payload)
+
     const accessToken = jwt.sign(payload, Variables.JWT_ACCESS_SECRET, { expiresIn: "30m" })
     const refreshToken = jwt.sign(payload, Variables.JWT_REFRESH_SECRET, { expiresIn: "30d" })
 

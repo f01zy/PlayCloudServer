@@ -29,8 +29,8 @@ export class UserService {
 
     const user = await userModel.create({ username, email, password: hashPassword, activationLink })
 
-    const tokens = await tokenService.generateTokens(user.id)
-    await tokenService.saveToken(user.id, tokens.refreshToken)
+    const tokens = await tokenService.generateTokens(user._id as unknown as string)
+    await tokenService.saveToken(user._id as unknown as string, tokens.refreshToken)
 
     return {
       ...tokens,
@@ -51,8 +51,8 @@ export class UserService {
       throw ApiError.BadRequest("Неверный пароль")
     }
 
-    const tokens = await tokenService.generateTokens(user.id)
-    await tokenService.saveToken(user.id, tokens.refreshToken)
+    const tokens = await tokenService.generateTokens(user._id as unknown as string)
+    await tokenService.saveToken(user._id as unknown as string, tokens.refreshToken)
 
     return {
       ...tokens,
@@ -79,8 +79,8 @@ export class UserService {
   public async refresh(refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
 
-    const tokens = await tokenService.generateTokens(user.id)
-    await tokenService.saveToken(user.id, tokens.refreshToken)
+    const tokens = await tokenService.generateTokens(user._id as unknown as string)
+    await tokenService.saveToken(user._id as unknown as string, tokens.refreshToken)
 
     return {
       ...tokens,
