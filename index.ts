@@ -16,7 +16,7 @@ export const app = express()
 
 app.use(cors({
   credentials: true,
-  origin: Variables.MODE == "development" ? Variables.CLIENT_DEVELOPMENT_URL : Variables.CLIENT_PRODUCTION_URL
+  origin: Variables.CLIENT_URL
 }))
 app.use(fileUpload())
 app.use(express.json())
