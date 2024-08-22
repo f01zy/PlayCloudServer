@@ -6,6 +6,7 @@ import { musicModel } from "../models/music.model";
 import { Document, Schema } from "mongoose";
 import { IMusic } from "../interfaces/music.interface";
 import { TokenService } from "../service/token.service";
+import { Types } from "mongoose";
 
 interface RequestBodyCreate {
   name: string,
@@ -58,7 +59,9 @@ export class MusicController {
 
   public async getOneMusic(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
     try {
-      const id = req.params.id
+      const { id } = req.params
+
+      if (!Types.ObjectId.isValid(id)) throw ApiError.BadRequest("Введите корректный id")
 
       if (!id) throw ApiError.BadRequest("id песни не был указан")
 
