@@ -52,12 +52,14 @@ export class MusicService {
   public async listen(refreshToken: string, musicId: Schema.Types.ObjectId) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const music = await musicModel.findById(musicId)
+
     if (!music) {
       throw ApiError.BadRequest("Музыки с таким id не существует")
     }
     if (music.listening.indexOf(user.id) === -1) {
       music.listening.push(user.id)
     }
+
     music.save()
 
     const history = user.history.filter(historyMusic => historyMusic != musicId)

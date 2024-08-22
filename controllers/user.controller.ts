@@ -64,7 +64,7 @@ export class UserController {
       const activationLink = req.params.link
       await userService.activate(activationLink)
 
-      return res.json("success");
+      return res.redirect(Variables.CLIENT_URL)
     } catch (e) {
       next(e)
     }

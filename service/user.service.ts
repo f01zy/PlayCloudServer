@@ -4,8 +4,10 @@ import { TokenService } from "./token.service"
 import { ApiError } from "../exceptions/api.exception"
 import bcrypt from "bcrypt"
 import { UserDto } from "../dtos/user.dto"
-import { Document, Schema } from "mongoose"
+import { Document } from "mongoose"
 import { IUser } from "../interfaces/user.interface"
+import uuid from "uuid"
+import { Variables } from "../env/variables.env"
 
 const mailService = new MailService()
 const tokenService = new TokenService()
@@ -25,7 +27,9 @@ export class UserService {
     }
 
     const hashPassword = await bcrypt.hash(password, 3)
-    const activationLink = email
+    const activationLink = uuid.v4()
+
+    try { await mailService.sendActivationMail(email, Variables.SERVER_URL + "/auth/activate/" + activationLink) } catch { }
 
     const user = await userModel.create({ username, email, password: hashPassword, activationLink })
 
