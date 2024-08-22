@@ -14,7 +14,9 @@ import fileUpload from "express-fileupload"
 
 export const app = express()
 
-app.use(cors({ credentials: true, origin: Variables.CLIENT_URL + ":3000" }))
+console.log(Variables.CLIENT_URL)
+
+app.use(cors({ credentials: true, origin: Variables.CLIENT_URL }))
 app.use(fileUpload())
 app.use(express.json())
 app.use(cookieParser())
