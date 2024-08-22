@@ -10,6 +10,6 @@ export class Variables {
   public static readonly DATABASE_URL: string = process.env.DATABASE_URL!
   public static readonly MODE: "development" | "production" = process.env.MODE! as "development" | "production"
   public static readonly PORT: string = process.env.PORT!
-  public static readonly SERVER_URL: string = (this.MODE === "development" ? process.env.DEVELOPMENT_URL : process.env.CLIENT_PRODUCTION_URL) + ":5050"
-  public static readonly CLIENT_URL: string = (this.MODE === "development" ? process.env.DEVELOPMENT_URL : process.env.CLIENT_PRODUCTION_URL) + ":3000"
+  public static readonly SERVER_URL: string = `${this.MODE === "development" ? process.env.DEVELOPMENT_URL : process.env.CLIENT_PRODUCTION_URL}:5050`
+  public static readonly CLIENT_URL: string = `${this.MODE === "development" ? process.env.DEVELOPMENT_URL : process.env.CLIENT_PRODUCTION_URL}:3000`
 }
