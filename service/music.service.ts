@@ -17,6 +17,10 @@ export class MusicService {
   public async create(files: UploadedFile[], name: string, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
 
+    const musicSearch = await musicModel.findOne({ name })
+
+    if (musicSearch) throw ApiError.BadRequest("Песня с таким названием уже существует")
+
     const musicCreated = await musicModel.create({ author: user._id, name })
 
     if (files[0].name.endsWith("mp3")) { files[0].mv(path.join('static', "music", `${musicCreated._id}.mp3`)); files[1].mv(path.join('static', "cover", `${musicCreated._id}.jpg`)) } else { files[1].mv(path.join('static', "music", `${musicCreated._id}.mp3`)); files[0].mv(path.join('static', "cover", `${musicCreated._id}.jpg`)) }
