@@ -60,11 +60,11 @@ export class MusicController {
     try {
       const id = req.params.id
 
-      if (!id) return next(ApiError.BadRequest("id песни не был указан"))
+      if (!id) throw ApiError.BadRequest("id песни не был указан")
 
       const music = await musicModel.findById(id)
 
-      if (!music) return next(ApiError.BadRequest("Песни с указанным id не существует"))
+      if (!music) throw ApiError.BadRequest("Песни с указанным id не существует")
 
       return res.json(await musicService.populate(music))
     } catch (e) {
