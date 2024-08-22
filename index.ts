@@ -30,6 +30,8 @@ const PORT = Variables.PORT
 
 const start = async () => {
   try {
+    console.log(Variables.DATABASE_URL);
+
     await mongoose.connect(Variables.DATABASE_URL)
 
     server.listen(PORT, () => {
