@@ -85,13 +85,11 @@ export class UserController {
     try {
       const { id } = req.params
 
-      if (!Types.ObjectId.isValid(id)) throw ApiError.BadRequest("Введите корректный id")
+      if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const user = await userModel.findById(id)
 
-      if (!user) {
-        throw ApiError.BadRequest("Пользователя с таким id не существует")
-      }
+      if (!user) throw ApiError.NotFound()
 
       return res.json(new UserDto(await userService.populate(user)))
     } catch (e) {
