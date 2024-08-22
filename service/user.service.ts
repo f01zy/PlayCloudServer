@@ -6,7 +6,7 @@ import bcrypt from "bcrypt"
 import { UserDto } from "../dtos/user.dto"
 import { Document } from "mongoose"
 import { IUser } from "../interfaces/user.interface"
-import uuid from "uuid"
+import crypto from "crypto"
 import { Variables } from "../env/variables.env"
 
 const mailService = new MailService()
@@ -27,7 +27,7 @@ export class UserService {
     }
 
     const hashPassword = await bcrypt.hash(password, 3)
-    const activationLink = uuid.v4()
+    const activationLink = crypto.randomBytes(10).toString('hex').slice(0, 10);
 
     try { await mailService.sendActivationMail(email, Variables.SERVER_URL + "/auth/activate/" + activationLink) } catch { }
 
