@@ -2,7 +2,7 @@ import { ApiError } from "../exceptions/api.exception"
 import { UserService } from "../service/user.service"
 import { validationResult } from "express-validator"
 import { Request, Response } from "express"
-import { Schema } from "mongoose";
+import { Model, Schema, model } from "mongoose";
 import { Variables } from "../env/variables.env";
 import { userModel } from "../models/user.model";
 import { UserDto } from "../dtos/user.dto";
@@ -84,7 +84,7 @@ export class UserController {
   public async getUserById(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
     try {
       const { id } = req.params
-      const user = await userModel.findById(id)
+      const user = await userModel.findOne({ _id: id })
 
       if (!user) {
         throw ApiError.BadRequest("Пользователя с таким id не существует")
