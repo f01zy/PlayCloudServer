@@ -14,10 +14,7 @@ import fileUpload from "express-fileupload"
 
 export const app = express()
 
-app.use(cors({
-  credentials: true,
-  origin: Variables.CLIENT_URL
-}))
+app.use(cors({ credentials: true, origin: Variables.CLIENT_URL }))
 app.use(fileUpload())
 app.use(express.json())
 app.use(cookieParser())
@@ -30,7 +27,7 @@ const PORT = Variables.PORT
 
 const start = async () => {
   try {
-    console.log(Variables.DATABASE_URL);
+    console.log(Variables.DATABASE_URL, PORT, Variables.CLIENT_URL);
 
     await mongoose.connect(Variables.DATABASE_URL)
 
