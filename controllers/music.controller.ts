@@ -68,6 +68,9 @@ export class MusicController {
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const redisData = await getDataFromRedis(id)
+
+      console.log(redisData)
+
       if (redisData) return redisData
 
       const music = await musicModel.findById(id)
