@@ -11,9 +11,8 @@ import mongoose from "mongoose"
 import { Variables } from "./env/variables.env"
 import path from "path"
 import fileUpload from "express-fileupload"
-import redis from "redis"
+import { createClient } from "redis"
 
-export const client = redis.createClient()
 export const app = express()
 
 app.use(cors({ credentials: true, origin: Variables.CLIENT_URL }))
@@ -24,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'static')))
 app.use("/api", router)
 app.use(errorMiddleware)
 
+export const client = createClient({ url: "redis://:playcloudredispassword@redis-6379.c305.ap-south-1-1.ec2.cloud.redislabs.com:6379" })
 const server = http.createServer(app)
 const PORT = Variables.PORT
 
