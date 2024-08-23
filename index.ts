@@ -29,7 +29,7 @@ const PORT = Variables.PORT
 
 const start = async () => {
   try {
-    client.on("error", error => { throw new Error("При создании клиента redis произошла ошибка") })
+    client.on("error", error => console.log(error))
 
     await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
