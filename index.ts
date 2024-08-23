@@ -23,13 +23,15 @@ app.use(express.static(path.join(__dirname, 'static')))
 app.use("/api", router)
 app.use(errorMiddleware)
 
-export const client = createClient({ url: "redis://:playcloudredispassword@redis-6379.c305.ap-south-1-1.ec2.cloud.redislabs.com:6379" })
+export const client = createClient({ url: `redis://:playcloudredispassword@147.45.160.178:6379` })
+  .on("error", error => console.log(error))
+
 const server = http.createServer(app)
 const PORT = Variables.PORT
 
 const start = async () => {
   try {
-    client.on("error", error => console.log(error))
+
 
     await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
