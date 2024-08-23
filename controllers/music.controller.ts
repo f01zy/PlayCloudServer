@@ -7,6 +7,8 @@ import { Document, Schema } from "mongoose";
 import { IMusic } from "../interfaces/music.interface";
 import { TokenService } from "../service/token.service";
 import { Types } from "mongoose";
+import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
+import { setDataToRedis } from "../utils/setDataToRedis.utils";
 
 interface RequestBodyCreate {
   name: string,
@@ -61,13 +63,18 @@ export class MusicController {
     try {
       const { id } = req.params
 
+      if (!id) throw ApiError.BadRequest("id песни не был указан")
+
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
-      if (!id) throw ApiError.BadRequest("id песни не был указан")
+      const redisData = await getDataFromRedis(id)
+      if (redisData) return redisData
 
       const music = await musicModel.findById(id)
 
       if (!music) throw ApiError.NotFound()
+
+      await setDataToRedis(id, music)
 
       return res.json(await musicService.populate(music))
     } catch (e) {

@@ -11,7 +11,9 @@ import mongoose from "mongoose"
 import { Variables } from "./env/variables.env"
 import path from "path"
 import fileUpload from "express-fileupload"
+import redis from "redis"
 
+export const client = redis.createClient()
 export const app = express()
 
 app.use(cors({ credentials: true, origin: Variables.CLIENT_URL }))
@@ -27,6 +29,9 @@ const PORT = Variables.PORT
 
 const start = async () => {
   try {
+    client.on("error", error => { throw new Error("При создании клиента redis произошла ошибка") })
+
+    await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
 
     server.listen(PORT, () => {

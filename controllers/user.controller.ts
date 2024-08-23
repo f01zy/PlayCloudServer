@@ -6,6 +6,8 @@ import { Types } from "mongoose";
 import { Variables } from "../env/variables.env";
 import { userModel } from "../models/user.model";
 import { UserDto } from "../dtos/user.dto";
+import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
+import { setDataToRedis } from "../utils/setDataToRedis.utils";
 
 interface IAuthRequestBody {
   username: string;
@@ -87,9 +89,14 @@ export class UserController {
 
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
+      const redisData = await getDataFromRedis(id)
+      if (redisData) return redisData
+
       const user = await userModel.findById(id)
 
       if (!user) throw ApiError.NotFound()
+
+      await setDataToRedis(id, user)
 
       return res.json(new UserDto(await userService.populate(user)))
     } catch (e) {
