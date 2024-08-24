@@ -3,7 +3,6 @@ import { MailService } from "./mail.service"
 import { TokenService } from "./token.service"
 import { ApiError } from "../exceptions/api.exception"
 import bcrypt from "bcrypt"
-import { UserDto } from "../dtos/user.dto"
 import { Document } from "mongoose"
 import { IUser } from "../interfaces/user.interface"
 import crypto from "crypto"
@@ -38,7 +37,7 @@ export class UserService {
 
     return {
       ...tokens,
-      user: new UserDto(await this.populate(user))
+      user: await this.populate(user)
     }
   }
 
@@ -60,7 +59,7 @@ export class UserService {
 
     return {
       ...tokens,
-      user: new UserDto(await this.populate(user))
+      user: await this.populate(user)
     }
   }
 
@@ -88,7 +87,7 @@ export class UserService {
 
     return {
       ...tokens,
-      user: new UserDto(await this.populate(user))
+      user: await this.populate(user)
     }
   }
 

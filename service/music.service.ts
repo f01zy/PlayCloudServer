@@ -6,7 +6,6 @@ import { musicModel } from "../models/music.model"
 import path from "path"
 import fs from "fs"
 import { UserService } from "./user.service"
-import { UserDto } from "../dtos/user.dto"
 import { Document, Schema } from "mongoose"
 import { IMusic } from "../interfaces/music.interface"
 
@@ -28,7 +27,7 @@ export class MusicService {
     user.music.push(musicCreated.id)
     user.save()
 
-    return new UserDto(await userService.populate(user))
+    return await userService.populate(user)
   }
 
   public async delete(id: string, refreshToken: string) {
@@ -47,7 +46,7 @@ export class MusicService {
       delete user.music[music.id]
       user.save()
 
-      return new UserDto(await userService.populate(user))
+      return await userService.populate(user)
     } catch (error) {
       throw ApiError.BadRequest("Музыки с таким id не существует")
     }
@@ -78,7 +77,7 @@ export class MusicService {
       throw ApiError.BadRequest("Неверный запрос")
     }
 
-    return new UserDto(await userService.populate(newUser))
+    return await userService.populate(newUser)
   }
 
   public async populate(music: Document<unknown, {}, IMusic> & IMusic) {

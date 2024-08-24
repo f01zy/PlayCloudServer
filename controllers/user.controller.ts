@@ -5,7 +5,6 @@ import { Request, Response } from "express"
 import { Types } from "mongoose";
 import { Variables } from "../env/variables.env";
 import { userModel } from "../models/user.model";
-import { UserDto } from "../dtos/user.dto";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
 
@@ -96,11 +95,9 @@ export class UserController {
 
       if (!user) throw ApiError.NotFound()
 
-      await setDataToRedis(id, new UserDto(await userService.populate(user)))
+      await setDataToRedis(id, await userService.populate(user))
 
-      console.log(user, redisData)
-
-      return res.json(new UserDto(await userService.populate(user)))
+      return res.json(await userService.populate(user))
     } catch (e) {
       next(e)
     }
