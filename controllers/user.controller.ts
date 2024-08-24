@@ -95,7 +95,7 @@ export class UserController {
 
       if (!user) throw ApiError.NotFound()
 
-      await setDataToRedis(id, await userService.populate(user))
+      await setDataToRedis(id, (await userService.populate(user)).toObject())
 
       return res.json(await userService.populate(user))
     } catch (e) {
