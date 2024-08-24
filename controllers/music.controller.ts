@@ -9,6 +9,7 @@ import { TokenService } from "../service/token.service";
 import { Types } from "mongoose";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
+import { UserService } from "../service/user.service";
 
 interface RequestBodyCreate {
   name: string,
@@ -21,6 +22,7 @@ interface RequestBodyId {
 
 const musicService = new MusicService()
 const tokenService = new TokenService()
+const userService = new UserService()
 
 export class MusicController {
   public async create(req: Request<{}, {}, RequestBodyCreate>, res: Response, next: Function) {
@@ -130,6 +132,16 @@ export class MusicController {
       music.save()
 
       return res.json(await musicService.populate(music))
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  public async getNext(req: Request, res: Response, next: Function) {
+    try {
+      const { refreshToken } = req.cookies
+      const user = await userService.populate((await tokenService.getUserByRefreshToken(refreshToken)))
+      return res.json(user.history[user.history.length - 1])
     } catch (e) {
       next(e)
     }
