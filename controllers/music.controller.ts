@@ -136,14 +136,4 @@ export class MusicController {
       next(e)
     }
   }
-
-  public async getNext(req: Request, res: Response, next: Function) {
-    try {
-      const { refreshToken } = req.cookies
-      const user = await userService.populate((await tokenService.getUserByRefreshToken(refreshToken)))
-      return res.json(user.history[user.history.length - 1])
-    } catch (e) {
-      next(e)
-    }
-  }
 }
