@@ -89,20 +89,15 @@ export class UserController {
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const redisData = await getDataFromRedis(id)
-      if (redisData) {
-        console.log(redisData)
-        return res.json(redisData)
-      }
+      if (redisData) return res.json(redisData)
 
       const user = await userModel.findById(id)
 
       if (!user) throw ApiError.NotFound()
 
-      await setDataToRedis(id, (await userService.populate(user)).toJSON())
+      await setDataToRedis(id, await userService.populate(user))
 
-      console.log(user)
-
-      return res.json(await userService.populate(user))
+      return res.json(await getDataFromRedis(id))
     } catch (e) {
       next(e)
     }
