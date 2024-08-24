@@ -98,6 +98,8 @@ export class UserController {
 
       await setDataToRedis(id, new UserDto(await userService.populate(user)))
 
+      console.log(user, redisData)
+
       return res.json(new UserDto(await userService.populate(user)))
     } catch (e) {
       next(e)
