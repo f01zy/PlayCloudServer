@@ -69,8 +69,8 @@ export class MusicController {
 
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
-      const redisData = await getDataFromRedis(id)
-      if (redisData) return res.json(redisData)
+      const redisMusic = await getDataFromRedis(id)
+      if (redisMusic) return res.json(redisMusic)
 
       const music = await musicModel.findById(id)
 
@@ -86,6 +86,9 @@ export class MusicController {
 
   public async getAllMusic(req: Request, res: Response, next: Function) {
     try {
+      const redisMusic = await getDataFromRedis("music")
+      if (redisMusic) return res.json(redisMusic)
+
       const music = await musicModel.find()
       const musicPopulate: Array<Document<unknown, {}, IMusic>> = []
 
@@ -93,7 +96,9 @@ export class MusicController {
         musicPopulate.push(await musicService.populate(musicOnePopulate))
       }
 
-      return res.json(music)
+      await setDataToRedis("music", musicPopulate)
+
+      return res.json(await getDataFromRedis("music"))
     } catch (e) {
       next(e)
     }
