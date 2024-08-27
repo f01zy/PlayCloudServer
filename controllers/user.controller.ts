@@ -104,18 +104,44 @@ export class UserController {
     }
   }
 
-  public async edit(req: Request, res: Response, next: Function) {
+  public async editBanner(req: Request, res: Response, next: Function) {
     try {
       if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("Файлы не были переданы")
 
-      console.log(req.files.one, req.files.two)
-
-      const { files } = req.files
-      const { username } = req.body
+      const { banner } = req.files
       const { refreshToken } = req.cookies
-      if (!username) throw ApiError.BadRequest("username не был передан")
 
-      const user = await userService.edit(files as UploadedFile[], username, refreshToken)
+      const user = await userService.editBanner(banner as UploadedFile, refreshToken)
+
+      return res.json(user)
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  public async editAvatar(req: Request, res: Response, next: Function) {
+    try {
+      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("Файлы не были переданы")
+
+      const { avatar } = req.files
+      const { refreshToken } = req.cookies
+
+      const user = await userService.editAvatar(avatar as UploadedFile, refreshToken)
+
+      return res.json(user)
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  public async editUsername(req: Request, res: Response, next: Function) {
+    try {
+      const { refreshToken } = req.cookies
+      const { username } = req.body
+
+      if (!username) throw ApiError.BadRequest("username не был указан")
+
+      const user = await userService.editUsername(username, refreshToken)
 
       return res.json(user)
     } catch (e) {

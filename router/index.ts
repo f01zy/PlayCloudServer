@@ -15,7 +15,9 @@ router.post("/auth/register",
   body("password").isLength({ min: 8 }),
   userController.register
 )
-router.post("/auth/edit", userController.edit)
+router.post("/auth/edit/banner", userController.editBanner)
+router.post("/auth/edit/avatar", userController.editAvatar)
+router.post("/auth/edit/username", userController.editUsername)
 router.post("/auth/login", userController.login)
 router.get("/auth/logout", userController.logout)
 router.get("/auth/activate/:link", userController.activate)

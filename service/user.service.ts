@@ -93,12 +93,33 @@ export class UserService {
     }
   }
 
-  public async edit(files: UploadedFile[], username: string, refreshToken: string) {
-    // const user = await tokenService.getUserByRefreshToken(refreshToken)
-    // files[0].mv(path.join('static', "banner", `${user._id}.jpg`))
-    // files[1].mv(path.join('static', "avatar", `${user._id}.jpg`))
+  public async editBanner(banner: UploadedFile, refreshToken: string) {
+    const user = await tokenService.getUserByRefreshToken(refreshToken)
+    banner.mv(path.join('static', "banner", `${user._id}.jpg`))
 
-    // user.avatar = true
+    user.banner = true
+    user.save()
+
+    return user
+  }
+
+  public async editAvatar(avatar: UploadedFile, refreshToken: string) {
+    const user = await tokenService.getUserByRefreshToken(refreshToken)
+    avatar.mv(path.join('static', "avatar", `${user._id}.jpg`))
+
+    user.avatar = true
+    user.save()
+
+    return user
+  }
+
+  public async editUsername(username: string, refreshToken: string) {
+    const user = await tokenService.getUserByRefreshToken(refreshToken)
+
+    user.username = username
+    user.save()
+
+    return user
   }
 
   public async populate(user: Document<unknown, {}, IUser> & IUser) {
