@@ -98,12 +98,6 @@ export class UserService {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const pathname = path.join("static", "banner", `${user._id}.jpg`)
 
-    fs.access(pathname, fs.constants.F_OK, (err) => {
-      if (err) return
-
-      fs.unlink(pathname, () => { })
-    })
-
     banner.mv(pathname)
 
     user.banner = true
@@ -115,12 +109,6 @@ export class UserService {
   public async editAvatar(avatar: UploadedFile, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const pathname = path.join('static', "avatar", `${user._id}.jpg`)
-
-    fs.access(pathname, fs.constants.F_OK, (err) => {
-      if (err) return
-
-      fs.unlink(pathname, () => { })
-    })
 
     avatar.mv(pathname)
 
