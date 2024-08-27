@@ -113,6 +113,8 @@ export class UserController {
       const { refreshToken } = req.cookies
       if (!username) throw ApiError.BadRequest("username не был передан")
 
+      console.log(files, req.files)
+
       const user = await userService.edit(files as UploadedFile[], username, refreshToken)
 
       return res.json(user)
