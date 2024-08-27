@@ -9,6 +9,7 @@ import crypto from "crypto"
 import { Variables } from "../env/variables.env"
 import { UploadedFile } from "express-fileupload"
 import path from "path"
+import fs from "fs"
 
 const mailService = new MailService()
 const tokenService = new TokenService()
@@ -95,9 +96,15 @@ export class UserService {
 
   public async editBanner(banner: UploadedFile, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
-    banner.mv(path.join('static', "banner", `${user._id}.jpg`))
+    const pathname = path.join("static", "banner", `${user._id}.jpg`)
 
-    console.log(banner)
+    fs.access(pathname, fs.constants.F_OK, (err) => {
+      if (err) return
+
+      fs.unlink(pathname, () => { })
+    })
+
+    banner.mv(pathname)
 
     user.banner = true
     user.save()
@@ -107,9 +114,15 @@ export class UserService {
 
   public async editAvatar(avatar: UploadedFile, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
-    avatar.mv(path.join('static', "avatar", `${user._id}.jpg`))
+    const pathname = path.join('static', "avatar", `${user._id}.jpg`)
 
-    console.log(avatar)
+    fs.access(pathname, fs.constants.F_OK, (err) => {
+      if (err) return
+
+      fs.unlink(pathname, () => { })
+    })
+
+    avatar.mv(pathname)
 
     user.avatar = true
     user.save()
