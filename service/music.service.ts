@@ -84,7 +84,7 @@ export class MusicService {
   public async populate(music: Document<unknown, {}, IMusic> & IMusic) {
     return await music.populate([
       { path: "author" },
-      { path: "listenings", populate: "author" }
+      { path: "listenings", populate: "user" }
     ])
   }
 }
