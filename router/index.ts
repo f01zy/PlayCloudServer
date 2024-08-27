@@ -2,9 +2,11 @@ import { Router } from "express"
 import { body } from "express-validator"
 import { UserController } from "../controllers/user.controller"
 import { MusicController } from "../controllers/music.controller"
+import { PlaylistController } from "../controllers/playlist.controller"
 
 const userController = new UserController()
 const musicController = new MusicController()
+const playlistController = new PlaylistController()
 export const router = Router()
 
 router.post("/auth/register",
@@ -26,3 +28,6 @@ router.post("/music/like", musicController.like)
 router.post("/music", musicController.create)
 router.delete("/music", musicController.delete)
 router.get("/music", musicController.getAllMusic)
+
+router.post("/playlist", playlistController.create)
+router.delete("/playlist", playlistController.delete)

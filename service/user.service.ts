@@ -93,8 +93,8 @@ export class UserService {
 
   public async populate(user: Document<unknown, {}, IUser> & IUser) {
     return await user.populate([
-      { path: "music", populate: "author" },
-      { path: "liked", populate: "author" },
+      { path: "tracks", populate: "author" },
+      { path: "likes", populate: "author" },
       { path: "history", populate: "author" }
     ])
   }

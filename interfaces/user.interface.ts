@@ -6,7 +6,8 @@ export interface IUser {
   password: string
   isActivated: boolean
   activationLink: string
-  liked: Array<Schema.Types.ObjectId>
-  music: Array<Schema.Types.ObjectId>
+  likes: Array<Schema.Types.ObjectId>
+  tracks: Array<Schema.Types.ObjectId>
   history: Array<Schema.Types.ObjectId>
+  playlists: Array<Schema.Types.ObjectId>
 }

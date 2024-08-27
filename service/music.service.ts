@@ -8,6 +8,7 @@ import fs from "fs"
 import { UserService } from "./user.service"
 import { Document, Schema } from "mongoose"
 import { IMusic } from "../interfaces/music.interface"
+import { listeningModel } from "../models/listening.model"
 
 const tokenService = new TokenService()
 const userService = new UserService()
@@ -20,11 +21,11 @@ export class MusicService {
 
     if (musicSearch) throw ApiError.BadRequest("Песня с таким названием уже существует")
 
-    const musicCreated = await musicModel.create({ author: user._id, name })
+    const musicCreated = await musicModel.create({ author: user._id, name, date: new Date() })
 
     if (files[0].name.endsWith("mp3")) { files[0].mv(path.join('static', "music", `${musicCreated._id}.mp3`)); files[1].mv(path.join('static', "cover", `${musicCreated._id}.jpg`)) } else { files[1].mv(path.join('static', "music", `${musicCreated._id}.mp3`)); files[0].mv(path.join('static', "cover", `${musicCreated._id}.jpg`)) }
 
-    user.music.push(musicCreated.id)
+    user.tracks.push(musicCreated.id)
     user.save()
 
     return await userService.populate(user)
@@ -43,7 +44,7 @@ export class MusicService {
       fs.unlink(path.join('static', "music", `${music._id}.mp3`), () => { })
       fs.unlink(path.join('static', "cover", `${music._id}.jpg`), () => { })
 
-      delete user.music[music.id]
+      user.tracks = user.tracks.filter(track => track != music.id)
       user.save()
 
       return await userService.populate(user)
@@ -59,10 +60,10 @@ export class MusicService {
     if (!music) {
       throw ApiError.BadRequest("Музыки с таким id не существует")
     }
-    if (music.listening.indexOf(user.id) === -1) {
-      music.listening.push(user.id)
-    }
 
+    const listening = await listeningModel.create({ date: new Date(), user: user._id })
+
+    music.listenings.push(listening.id)
     music.save()
 
     const history = user.history.filter(historyMusic => historyMusic != musicId)
@@ -82,7 +83,8 @@ export class MusicService {
 
   public async populate(music: Document<unknown, {}, IMusic> & IMusic) {
     return await music.populate([
-      { path: "author" }
+      { path: "author" },
+      { path: "listenings", populate: "author" }
     ])
   }
 }

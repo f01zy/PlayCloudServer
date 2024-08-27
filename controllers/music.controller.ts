@@ -22,7 +22,6 @@ interface RequestBodyId {
 
 const musicService = new MusicService()
 const tokenService = new TokenService()
-const userService = new UserService()
 
 export class MusicController {
   public async create(req: Request<{}, {}, RequestBodyCreate>, res: Response, next: Function) {
@@ -133,7 +132,7 @@ export class MusicController {
         throw ApiError.BadRequest("Песни с таким id не существует")
       }
 
-      music.liked.indexOf(user.id) != -1 ? music.liked = music.liked.filter(userS => userS != user.id) : music.liked.push(user.id)
+      music.likes.indexOf(user.id) != -1 ? music.likes = music.likes.filter(userS => userS != user.id) : music.likes.push(user.id)
       music.save()
 
       return res.json(await musicService.populate(music))
