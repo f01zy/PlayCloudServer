@@ -97,6 +97,8 @@ export class UserService {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     banner.mv(path.join('static', "banner", `${user._id}.jpg`))
 
+    console.log(banner)
+
     user.banner = true
     user.save()
 
@@ -106,6 +108,8 @@ export class UserService {
   public async editAvatar(avatar: UploadedFile, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     avatar.mv(path.join('static', "avatar", `${user._id}.jpg`))
+
+    console.log(avatar)
 
     user.avatar = true
     user.save()
