@@ -4,7 +4,6 @@ import { TokenService } from "./token.service"
 import { userModel } from "../models/user.model"
 import { musicModel } from "../models/music.model"
 import path from "path"
-import fs from "fs"
 import { UserService } from "./user.service"
 import { Document, Schema } from "mongoose"
 import { IMusic } from "../interfaces/music.interface"
@@ -29,28 +28,6 @@ export class MusicService {
     user.save()
 
     return await userService.populate(user)
-  }
-
-  public async delete(id: string, refreshToken: string) {
-    const user = await tokenService.getUserByRefreshToken(refreshToken)
-
-    try {
-      const music = (await musicModel.findById(id))!
-
-      if (String(music.author) != String(user._id)) throw ApiError.BadRequest("Вы не являетесь создателем песни")
-
-      await musicModel.findByIdAndDelete(id)
-
-      fs.unlink(path.join('static', "music", `${music._id}.mp3`), () => { })
-      fs.unlink(path.join('static', "cover", `${music._id}.jpg`), () => { })
-
-      user.tracks = user.tracks.filter(track => track != music.id)
-      user.save()
-
-      return await userService.populate(user)
-    } catch (error) {
-      throw ApiError.BadRequest("Музыки с таким id не существует")
-    }
   }
 
   public async listen(refreshToken: string, musicId: Schema.Types.ObjectId) {

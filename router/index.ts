@@ -15,6 +15,7 @@ router.post("/auth/register",
   body("password").isLength({ min: 8 }),
   userController.register
 )
+router.post("/auth/edit", userController.edit)
 router.post("/auth/login", userController.login)
 router.get("/auth/logout", userController.logout)
 router.get("/auth/activate/:link", userController.activate)
@@ -26,8 +27,6 @@ router.get("/music/:id", musicController.getOneMusic)
 router.post("/music/listen", musicController.listen)
 router.post("/music/like", musicController.like)
 router.post("/music", musicController.create)
-router.delete("/music", musicController.delete)
 router.get("/music", musicController.getAllMusic)
 
 router.post("/playlist", playlistController.create)
-router.delete("/playlist", playlistController.delete)

@@ -25,17 +25,4 @@ export class PlaylistController {
       next(e)
     }
   }
-
-  public async delete(req: Request, res: Response, next: Function) {
-    try {
-      const { id } = req.body
-      if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
-
-      const { refreshToken } = req.cookies
-
-      await playlistService.delete(refreshToken, id)
-    } catch (e) {
-      next(e)
-    }
-  }
 }

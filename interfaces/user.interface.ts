@@ -6,6 +6,8 @@ export interface IUser {
   password: string
   isActivated: boolean
   activationLink: string
+  avatar: boolean,
+  banner: boolean,
   likes: Array<Schema.Types.ObjectId>
   tracks: Array<Schema.Types.ObjectId>
   history: Array<Schema.Types.ObjectId>

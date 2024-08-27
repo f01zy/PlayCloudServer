@@ -15,18 +15,6 @@ export class PlaylistService {
     return playlist
   }
 
-  async delete(refreshToken: string, id: string) {
-    const user = await tokenService.getUserByRefreshToken(refreshToken)
-    const playlist = await playlistModel.findById(id)
-
-    if (!playlist) throw ApiError.BadRequest("Такого плейлиста не существует")
-    if (playlist.author != user.id) throw ApiError.BadRequest("Вы не являетесь создателем плейлиста")
-
-    await playlistModel.findByIdAndDelete(id)
-    user.playlists = user.playlists.filter(p => p != playlist.id)
-    user.save()
-  }
-
   async populate(playlist: Document<unknown, {}, IPlaylist> & IPlaylist) {
     return await playlist.populate([
       { path: "author" },

@@ -7,6 +7,8 @@ import { Document } from "mongoose"
 import { IUser } from "../interfaces/user.interface"
 import crypto from "crypto"
 import { Variables } from "../env/variables.env"
+import { UploadedFile } from "express-fileupload"
+import path from "path"
 
 const mailService = new MailService()
 const tokenService = new TokenService()
@@ -89,6 +91,14 @@ export class UserService {
       ...tokens,
       user: await this.populate(user)
     }
+  }
+
+  public async edit(files: UploadedFile[], username: string, refreshToken: string) {
+    // const user = await tokenService.getUserByRefreshToken(refreshToken)
+    // files[0].mv(path.join('static', "banner", `${user._id}.jpg`))
+    // files[1].mv(path.join('static', "avatar", `${user._id}.jpg`))
+
+    console.log(files)
   }
 
   public async populate(user: Document<unknown, {}, IUser> & IUser) {

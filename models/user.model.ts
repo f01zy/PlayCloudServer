@@ -7,6 +7,8 @@ const UserSchema = new Schema<IUser>({
   password: { type: String, required: true },
   isActivated: { type: Boolean, default: false },
   activationLink: { type: String, required: true },
+  avatar: { type: Boolean, default: false },
+  banner: { type: Boolean, default: false },
   playlists: [{ type: String, default: [], ref: "Playlist" }],
   likes: [{ type: String, default: [], ref: "Music" }],
   tracks: [{ type: String, default: [], ref: "Music" }],

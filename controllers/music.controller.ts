@@ -26,8 +26,7 @@ const tokenService = new TokenService()
 export class MusicController {
   public async create(req: Request<{}, {}, RequestBodyCreate>, res: Response, next: Function) {
     try {
-      if (!req.files || Object.keys(req.files).length === 0)
-        return next(ApiError.BadRequest("Файлы не были переданы"))
+      if (!req.files || Object.keys(req.files).length === 0) return next(ApiError.BadRequest("Файлы не были переданы"))
 
       const { files } = req.files
 
@@ -38,21 +37,6 @@ export class MusicController {
       const { refreshToken } = req.cookies
 
       const user = await musicService.create(files as UploadedFile[], name, refreshToken)
-
-      return res.json(user)
-    } catch (e) {
-      next(e)
-    }
-  }
-
-  public async delete(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
-    try {
-      const id = req.body.id
-      const { refreshToken } = req.cookies
-
-      if (!id) return next(ApiError.BadRequest("id песни не был указан"))
-
-      const user = await musicService.delete(id, refreshToken)
 
       return res.json(user)
     } catch (e) {

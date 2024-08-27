@@ -7,6 +7,7 @@ import { Variables } from "../env/variables.env";
 import { userModel } from "../models/user.model";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
+import { UploadedFile } from "express-fileupload";
 
 interface IAuthRequestBody {
   username: string;
@@ -98,6 +99,23 @@ export class UserController {
       await setDataToRedis(id, await userService.populate(user))
 
       return res.json(await getDataFromRedis(id))
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  public async edit(req: Request, res: Response, next: Function) {
+    try {
+      if (!req.files || Object.keys(req.files).length === 0) return next(ApiError.BadRequest("Файлы не были переданы"))
+
+      const { files } = req.files
+      const { username } = req.body
+      const { refreshToken } = req.cookies
+      if (!username) throw ApiError.BadRequest("username не был передан")
+
+      const user = await userService.edit(files as UploadedFile[], username, refreshToken)
+
+      return res.json(user)
     } catch (e) {
       next(e)
     }
