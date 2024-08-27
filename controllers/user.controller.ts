@@ -141,6 +141,12 @@ export class UserController {
 
       if (!username) throw ApiError.BadRequest("username не был указан")
 
+      const errors = validationResult(req)
+
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest("Ошибка валидации", errors.array()))
+      }
+
       const user = await userService.editUsername(username, refreshToken)
 
       return res.json(user)
