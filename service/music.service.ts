@@ -22,7 +22,8 @@ export class MusicService {
 
     const musicCreated = await musicModel.create({ author: user._id, name, date: new Date() })
 
-    if (files[0].name.endsWith("mp3")) { files[0].mv(path.join('static', "music", `${musicCreated._id}.mp3`)); files[1].mv(path.join('static', "cover", `${musicCreated._id}.jpg`)) } else { files[1].mv(path.join('static', "music", `${musicCreated._id}.mp3`)); files[0].mv(path.join('static', "cover", `${musicCreated._id}.jpg`)) }
+    files[0].mv(path.join('static', "cover", `${musicCreated._id}.jpg`))
+    files[1].mv(path.join('static', "music", `${musicCreated._id}.mp3`))
 
     user.tracks.push(musicCreated.id)
     user.save()

@@ -106,14 +106,14 @@ export class UserController {
 
   public async edit(req: Request, res: Response, next: Function) {
     try {
-      if (!req.files || Object.keys(req.files).length === 0) return next(ApiError.BadRequest("Файлы не были переданы"))
+      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("Файлы не были переданы")
+
+      console.log(req.files.one, req.files.two)
 
       const { files } = req.files
       const { username } = req.body
       const { refreshToken } = req.cookies
       if (!username) throw ApiError.BadRequest("username не был передан")
-
-      console.log(files, req.files)
 
       const user = await userService.edit(files as UploadedFile[], username, refreshToken)
 

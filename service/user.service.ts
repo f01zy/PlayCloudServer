@@ -98,7 +98,7 @@ export class UserService {
     // files[0].mv(path.join('static', "banner", `${user._id}.jpg`))
     // files[1].mv(path.join('static', "avatar", `${user._id}.jpg`))
 
-    console.log(files)
+    // user.avatar = true
   }
 
   public async populate(user: Document<unknown, {}, IUser> & IUser) {
