@@ -116,7 +116,7 @@ export class MusicController {
         throw ApiError.BadRequest("Песни с таким id не существует")
       }
 
-      user.likes.indexOf(music.id) != -1 ? music.likes = music.likes.filter(musicS => musicS != music.id) : music.likes.push(music.id)
+      user.likes.indexOf(music.id) != -1 ? user.likes = user.likes.filter(musicS => musicS != music.id) : user.likes.push(music.id)
       user.save()
       music.likes.indexOf(user.id) != -1 ? music.likes = music.likes.filter(userS => userS != user.id) : music.likes.push(user.id)
       music.save()
