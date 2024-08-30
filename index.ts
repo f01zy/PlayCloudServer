@@ -42,7 +42,7 @@ const start = async () => {
       console.log(`[INFO] server started in ${Variables.MODE} mode`);
     })
 
-    await elasticService.music()
+    // await elasticService.music()
   } catch (e) {
     throw new Error(e as string)
   }
