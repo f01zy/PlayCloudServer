@@ -13,8 +13,13 @@ import path from "path"
 import fileUpload from "express-fileupload"
 import { createClient } from "redis"
 import { Client } from "@elastic/elasticsearch"
+import { ElasticService } from "./service/elastic.service"
 
 export const app = express()
+export const client = createClient({ url: `redis://:playcloudredispassword@147.45.160.178:6379` }).on("error", error => console.log(error))
+export const elastic = new Client({ node: 'http://localhost:9200' })
+
+const elasticService = new ElasticService()
 
 app.use(cors({ credentials: true, origin: Variables.CLIENT_URL }))
 app.use(fileUpload())
@@ -24,23 +29,20 @@ app.use(express.static(path.join(__dirname, 'static')))
 app.use("/api", router)
 app.use(errorMiddleware)
 
-export const client = createClient({ url: `redis://:playcloudredispassword@147.45.160.178:6379` })
-  .on("error", error => console.log(error))
-
-export const elastic = new Client({ node: 'http://localhost:9200' })
-
 const server = http.createServer(app)
 const PORT = Variables.PORT
 
 const start = async () => {
   try {
-    console.log(await elastic.info())
+    console.log(`[INFO] elastic search started, cluster id: ${(await elastic.info()).cluster_uuid}`)
     await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
 
     server.listen(PORT, () => {
       console.log(`[INFO] server started in ${Variables.MODE} mode`);
     })
+
+    await elasticService.music()
   } catch (e) {
     throw new Error(e as string)
   }

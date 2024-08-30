@@ -3,10 +3,12 @@ import { body } from "express-validator"
 import { UserController } from "../controllers/user.controller"
 import { MusicController } from "../controllers/music.controller"
 import { PlaylistController } from "../controllers/playlist.controller"
+import { SearchController } from "../controllers/search.controller"
 
 const userController = new UserController()
 const musicController = new MusicController()
 const playlistController = new PlaylistController()
+const searchController = new SearchController()
 export const router = Router()
 
 router.post("/auth/register",
@@ -35,3 +37,5 @@ router.post("/music", musicController.create)
 router.get("/music", musicController.getAllMusic)
 
 router.post("/playlist", playlistController.create)
+
+router.get("/search", searchController.search)
