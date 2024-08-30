@@ -30,7 +30,6 @@ export class ElasticService {
 
       try {
         const operations = data.flatMap(doc => [{ index: { _index: 'music' } }, doc])
-        console.log(operations)
         const pr = await elastic.bulk({ refresh: true, operations })
         Promise.all([pr])
         console.log(`[INFO] music pack number ${i} is loaded, ${pr.items.length} objects in ${res.length}`)
