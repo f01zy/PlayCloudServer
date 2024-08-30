@@ -24,12 +24,13 @@ export class ElasticService {
       const data: Array<IMusic> = []
       const res = await this.getMusic(page)
 
-      for (const music of res) { data.push(music); console.log(music) }
+      for (const music of res) { data.push(music) }
 
       count = res.length;
 
       try {
         const operations = data.flatMap(doc => [{ index: { _index: 'music' } }, doc])
+        console.log(operations)
         const pr = await elastic.bulk({ refresh: true, operations })
         Promise.all([pr])
         console.log(`[INFO] music pack number ${i} is loaded, ${pr.items.length} objects in ${res.length}`)
