@@ -12,6 +12,7 @@ import { Variables } from "./env/variables.env"
 import path from "path"
 import fileUpload from "express-fileupload"
 import { createClient } from "redis"
+import { Client } from "@elastic/elasticsearch"
 
 export const app = express()
 
@@ -26,13 +27,14 @@ app.use(errorMiddleware)
 export const client = createClient({ url: `redis://:playcloudredispassword@147.45.160.178:6379` })
   .on("error", error => console.log(error))
 
+export const elastic = new Client({ node: 'http://localhost:9200' })
+
 const server = http.createServer(app)
 const PORT = Variables.PORT
 
 const start = async () => {
   try {
-
-
+    console.log(await elastic.info())
     await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
 
