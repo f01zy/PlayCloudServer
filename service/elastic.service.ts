@@ -24,7 +24,7 @@ export class ElasticService {
       const data: Array<IMusic> = []
       const res = await this.getMusic(page)
 
-      for (const music of res) { data.push(music) }
+      for (const music of res) { data.push(music); console.log(music) }
 
       count = res.length;
 

@@ -17,7 +17,7 @@ import { ElasticService } from "./service/elastic.service"
 
 export const app = express()
 export const client = createClient({ url: `redis://:playcloudredispassword@147.45.160.178:6379` }).on("error", error => console.log(error))
-export const elastic = new Client({ node: 'http://localhost:9200' })
+export const elastic = new Client({ node: 'http://localhost:9200', requestTimeout: 60 * 1000 })
 
 const elasticService = new ElasticService()
 
