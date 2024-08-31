@@ -8,6 +8,8 @@ import { UserService } from "./user.service"
 import { Document, Schema } from "mongoose"
 import { IMusic } from "../interfaces/music.interface"
 import { listeningModel } from "../models/listening.model"
+import { setDataToRedis } from "../utils/setDataToRedis.utils"
+import { getDataFromRedis } from "../utils/getDataFromRedis.utils"
 
 const tokenService = new TokenService()
 const userService = new UserService()
@@ -57,6 +59,22 @@ export class MusicService {
     }
 
     return await userService.populate(newUser)
+  }
+
+  public async getAllMusic() {
+    const redisMusic = await getDataFromRedis("music")
+    if (redisMusic) return redisMusic
+
+    const music = await musicModel.find()
+    const musicPopulate: Array<Document<unknown, {}, IMusic>> = []
+
+    for (const musicOnePopulate of music) {
+      musicPopulate.push(await this.populate(musicOnePopulate))
+    }
+
+    await setDataToRedis("music", musicPopulate)
+
+    return getDataFromRedis("music")
   }
 
   public async populate(music: Document<unknown, {}, IMusic> & IMusic) {

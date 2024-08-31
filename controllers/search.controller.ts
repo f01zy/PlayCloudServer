@@ -7,12 +7,12 @@ const searchService = new SearchService()
 export class SearchController {
   public async search(req: Request, res: Response, next: Function) {
     try {
-      const q = req.query.q as string
+      const { q, page, size } = req.query
       if (!q) throw ApiError.BadRequest("query не был указан")
 
-      const music = await searchService.music(q)
+      const music = await searchService.music(String(q), parseInt(String(page)), parseInt(String(size)))
 
-      return res.json({ music })
+      return res.json({ results: music.results, total: music.length })
     } catch (e) {
       next(e)
     }

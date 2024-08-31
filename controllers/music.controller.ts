@@ -3,13 +3,11 @@ import { ApiError } from "../exceptions/api.exception";
 import { MusicService } from "../service/music.service";
 import { UploadedFile } from "express-fileupload"
 import { musicModel } from "../models/music.model";
-import { Document, Schema } from "mongoose";
-import { IMusic } from "../interfaces/music.interface";
+import { Schema } from "mongoose";
 import { TokenService } from "../service/token.service";
 import { Types } from "mongoose";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
-import { UserService } from "../service/user.service";
 
 interface RequestBodyCreate {
   name: string,
@@ -69,19 +67,7 @@ export class MusicController {
 
   public async getAllMusic(req: Request, res: Response, next: Function) {
     try {
-      const redisMusic = await getDataFromRedis("music")
-      if (redisMusic) return res.json(redisMusic)
-
-      const music = await musicModel.find()
-      const musicPopulate: Array<Document<unknown, {}, IMusic>> = []
-
-      for (const musicOnePopulate of music) {
-        musicPopulate.push(await musicService.populate(musicOnePopulate))
-      }
-
-      await setDataToRedis("music", musicPopulate)
-
-      return res.json(await getDataFromRedis("music"))
+      return res.json(await musicService.getAllMusic())
     } catch (e) {
       next(e)
     }
