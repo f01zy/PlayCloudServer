@@ -10,8 +10,7 @@ export class SearchController {
       const { q, page, size } = req.query
       if (!q) throw ApiError.BadRequest("query не был указан")
 
-      console.log(q, parseInt(String(page)), parseInt(String(size)))
-      const music = await searchService.music(String(q), parseInt(String(page)), parseInt(String(size)))
+      const music = await searchService.music(String(q), page ? parseInt(String(page)) : 1, size ? parseInt(String(size)) : 10)
 
       return res.json({ results: music.results, total: music.length })
     } catch (e) {
