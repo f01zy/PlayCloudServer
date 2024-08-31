@@ -34,7 +34,7 @@ const PORT = Variables.PORT
 
 const start = async () => {
   try {
-    console.log(`[INFO] elastic search started, cluster id: ${(await elastic.info()).cluster_uuid}`)
+    console.log(`[INFO] elastic search started, cluster name: ${(await elastic.info()).cluster_name}`)
     await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
 

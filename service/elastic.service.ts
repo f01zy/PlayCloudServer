@@ -16,6 +16,8 @@ export class ElasticService {
   }
 
   public async music() {
+    await elastic.indices.create({ index: "music" }).then(() => console.log("[INFO] The music index a success created"))
+
     let i = 0
     let page = 1;
     let count = 0;
