@@ -42,6 +42,8 @@ const start = async () => {
       console.log(`[INFO] server started in ${Variables.MODE} mode`);
     })
 
+    console.log(`[INFO] ${(await elastic.count()).count} objects in elastic search cluster`)
+
     await elasticService.music()
   } catch (e) {
     throw new Error(e as string)
