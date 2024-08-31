@@ -13,6 +13,7 @@ export class SearchService {
     const array = await musicService.getAllMusic()
     let results = await this.search(q, array)
 
+    console.log(results, q, page, pageSize)
     const length = results.length;
     results = results.slice((page - 1) * pageSize, page * pageSize);
 
