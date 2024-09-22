@@ -5,8 +5,6 @@ import { PlaylistService } from "../service/playlist.service";
 import { ApiError } from "../exceptions/api.exception";
 import { Types } from "mongoose";
 
-const musicService = new MusicService()
-const tokenService = new TokenService()
 const playlistService = new PlaylistService()
 
 export class PlaylistController {
@@ -14,11 +12,7 @@ export class PlaylistController {
     try {
       const { name, description, tracks } = req.body
 
-      console.log(name, description, tracks)
-
       if (!name || !description || !tracks) throw ApiError.BadRequest("Аргументы не были указанны")
-
-      return
 
       const { refreshToken } = req.cookies
 
