@@ -132,7 +132,7 @@ export class UserService {
       { path: "tracks", populate: "author" },
       { path: "likes", populate: "author" },
       { path: "history", populate: "author" },
-      { path: "playlist", populate: [{ path: "author" }, { path: "tracks", populate: "author" }] }
+      { path: "playlists", populate: [{ path: "author" }, { path: "tracks", populate: "author" }] }
     ])
   }
 }
