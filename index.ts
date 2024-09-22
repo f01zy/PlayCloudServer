@@ -14,7 +14,7 @@ import fileUpload from "express-fileupload"
 import { createClient } from "redis"
 
 export const app = express()
-export const client = createClient({ url: `redis://:playcloud@94.241.171.213:6379` }).on("error", error => console.log(error))
+export const client = createClient({ url: `redis://:playcloud@localhost:6379` }).on("error", error => console.log(error))
 
 app.use(cors({ credentials: true, origin: Variables.CLIENT_URL }))
 app.use(fileUpload())
