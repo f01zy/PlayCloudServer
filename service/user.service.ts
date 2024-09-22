@@ -131,7 +131,8 @@ export class UserService {
     return await user.populate([
       { path: "tracks", populate: "author" },
       { path: "likes", populate: "author" },
-      { path: "history", populate: "author" }
+      { path: "history", populate: "author" },
+      { path: "playlist", populate: [{ path: "author" }, { path: "tracks", populate: "author" }] }
     ])
   }
 }
