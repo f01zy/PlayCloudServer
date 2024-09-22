@@ -14,7 +14,11 @@ export class PlaylistController {
     try {
       const { name, description, tracks } = req.body
 
+      console.log(name, description, tracks)
+
       if (!name || !description || !tracks) throw ApiError.BadRequest("Аргументы не были указанны")
+
+      return
 
       const { refreshToken } = req.cookies
 

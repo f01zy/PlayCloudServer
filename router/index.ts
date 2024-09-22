@@ -9,6 +9,7 @@ const userController = new UserController()
 const musicController = new MusicController()
 const playlistController = new PlaylistController()
 const searchController = new SearchController()
+
 export const router = Router()
 
 router.post("/auth/register",
