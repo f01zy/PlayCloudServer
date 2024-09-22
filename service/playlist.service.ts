@@ -12,6 +12,9 @@ export class PlaylistService {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const playlist = await playlistModel.create({ name, description, tracks, author: user })
 
+    user.playlists.push(playlist.id)
+    user.save()
+
     return playlist
   }
 
