@@ -12,8 +12,10 @@ export class PlaylistService {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const playlist = await playlistModel.create({ name, description, tracks, author: user })
 
+    playlist.saving.push(user.id)
     user.playlists.push(playlist.id)
     user.save()
+    playlist.save()
 
     return playlist
   }
@@ -24,8 +26,14 @@ export class PlaylistService {
 
     if (!playlist) throw ApiError.NotFound()
 
-    user.playlists.push(playlist.id)
-    playlist.saving.push(user.id)
+    if (user.playlists.includes(playlist.id)) {
+      user.playlists = user.playlists.filter(pl => pl != playlist.id)
+      playlist.saving = playlist.saving.filter(us => us != user.id)
+    } else {
+      user.playlists.push(playlist.id)
+      playlist.saving.push(user.id)
+    }
+
     user.save()
     playlist.save()
 
