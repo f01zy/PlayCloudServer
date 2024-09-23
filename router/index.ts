@@ -38,5 +38,7 @@ router.post("/music", musicController.create)
 router.get("/music", musicController.getAllMusic)
 
 router.post("/playlist", playlistController.create)
+router.get("/playlist/:id", playlistController.getOne)
+router.post("/playlist/save", playlistController.save)
 
 router.get("/search", searchController.search)

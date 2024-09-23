@@ -18,6 +18,20 @@ export class PlaylistService {
     return playlist
   }
 
+  public async save(refreshToken: string, id: string) {
+    const user = await tokenService.getUserByRefreshToken(refreshToken)
+    const playlist = await playlistModel.findById(id)
+
+    if (!playlist) throw ApiError.NotFound()
+
+    user.playlists.push(playlist.id)
+    playlist.saving.push(user.id)
+    user.save()
+    playlist.save()
+
+    return user
+  }
+
   async populate(playlist: Document<unknown, {}, IPlaylist> & IPlaylist) {
     return await playlist.populate([
       { path: "author" },
