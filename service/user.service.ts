@@ -54,7 +54,7 @@ export class UserService {
     const isPass = await bcrypt.compare(password, user.password)
 
     if (!isPass) {
-      throw ApiError.BadRequest("Error query")
+      throw ApiError.BadRequest("Incorrect password")
     }
 
     const tokens = await tokenService.generateTokens(user.id)
