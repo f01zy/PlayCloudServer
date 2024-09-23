@@ -3,7 +3,6 @@ import { ValidationError } from "express-validator"
 export class ApiError extends Error {
   public status
   public errors
-  public message
 
   constructor(status: number, message: string, errors: ValidationError[] = []) {
     super(message)
@@ -13,11 +12,11 @@ export class ApiError extends Error {
   }
 
   public static UnauthorizedError() {
-    return new ApiError(401, "Пользователь не авторизован")
+    return new ApiError(401, "User is not auth")
   }
 
   public static NotFound() {
-    return new ApiError(404, "Не найдено")
+    return new ApiError(404, "Not found")
   }
 
   public static BadRequest(message: string, errors: ValidationError[] = []) {
