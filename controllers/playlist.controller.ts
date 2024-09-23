@@ -55,9 +55,9 @@ export class PlaylistController {
 
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
-      const user = await playlistService.save(refreshToken, id)
+      const playlist = await playlistService.save(refreshToken, id)
 
-      return res.json(await userService.populate(user))
+      return res.json(await playlistService.populate(playlist))
     } catch (e) {
       next(e)
     }

@@ -37,7 +37,7 @@ export class PlaylistService {
     user.save()
     playlist.save()
 
-    return user
+    return playlist
   }
 
   async populate(playlist: Document<unknown, {}, IPlaylist> & IPlaylist) {
