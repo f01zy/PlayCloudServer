@@ -20,7 +20,7 @@ export class MusicService {
 
     const musicSearch = await musicModel.findOne({ name })
 
-    if (musicSearch) throw ApiError.BadRequest("Песня с таким названием уже существует")
+    if (musicSearch) throw ApiError.BadRequest("Track already exists")
 
     const musicCreated = await musicModel.create({ author: user._id, name, date: new Date() })
 
@@ -38,7 +38,7 @@ export class MusicService {
     const music = await musicModel.findById(musicId)
 
     if (!music) {
-      throw ApiError.BadRequest("Музыки с таким id не существует")
+      throw ApiError.BadRequest("There is no song with this id")
     }
 
     const listening = await listeningModel.create({ date: new Date(), user: user._id })
@@ -55,7 +55,7 @@ export class MusicService {
     )
 
     if (!newUser) {
-      throw ApiError.BadRequest("Неверный запрос")
+      throw ApiError.BadRequest("Error query")
     }
 
     return await userService.populate(newUser)

@@ -19,13 +19,13 @@ export class UserService {
     const candidateEmail = await userModel.findOne({ email })
 
     if (candidateEmail) {
-      throw ApiError.BadRequest("Пользователь с таким email уже сушествует")
+      throw ApiError.BadRequest("A user with this email already exists")
     }
 
     const candidateUsername = await userModel.findOne({ username })
 
     if (candidateUsername) {
-      throw ApiError.BadRequest("Пользователь с таким username уже сушествует")
+      throw ApiError.BadRequest("A user with this username already exists")
     }
 
     const hashPassword = await bcrypt.hash(password, 3)
@@ -48,13 +48,13 @@ export class UserService {
     const user = await userModel.findOne({ email })
 
     if (!user) {
-      throw ApiError.BadRequest("Пользователь с таким email не найден")
+      throw ApiError.BadRequest("The user with this email was not found")
     }
 
     const isPass = await bcrypt.compare(password, user.password)
 
     if (!isPass) {
-      throw ApiError.BadRequest("Неверный пароль")
+      throw ApiError.BadRequest("Error query")
     }
 
     const tokens = await tokenService.generateTokens(user.id)
@@ -75,7 +75,7 @@ export class UserService {
     const user = await userModel.findOne({ activationLink })
 
     if (!user) {
-      throw ApiError.BadRequest("Неккоректная ссылка активации")
+      throw ApiError.BadRequest("Non-direct activation link")
     }
 
     user.isActivated = true

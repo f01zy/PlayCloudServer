@@ -8,7 +8,7 @@ export class SearchController {
   public async search(req: Request, res: Response, next: Function) {
     try {
       const { q, page, size } = req.query
-      if (!q) throw ApiError.BadRequest("query не был указан")
+      if (!q) throw ApiError.BadRequest("The query field is required")
 
       const music = await searchService.music(String(q), page ? parseInt(String(page)) : 1, size ? parseInt(String(size)) : 10)
 

@@ -46,7 +46,7 @@ export class MusicController {
     try {
       const { id } = req.params
 
-      if (!id) throw ApiError.BadRequest("id песни не был указан")
+      if (!id) throw ApiError.BadRequest("The id field is required")
 
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
@@ -79,7 +79,7 @@ export class MusicController {
       const { refreshToken } = req.cookies
 
       if (!id) {
-        throw ApiError.BadRequest("id песни не был указан")
+        throw ApiError.BadRequest("The id field is required")
       }
 
       const user = await musicService.listen(refreshToken, id as unknown as Schema.Types.ObjectId)
@@ -99,7 +99,7 @@ export class MusicController {
       const music = await musicModel.findById(id)
 
       if (!music) {
-        throw ApiError.BadRequest("Песни с таким id не существует")
+        throw ApiError.BadRequest("There is no song with this id")
       }
 
       user.likes.indexOf(music.id) != -1 ? user.likes = user.likes.filter(musicS => musicS != music.id) : user.likes.push(music.id)

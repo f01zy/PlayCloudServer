@@ -65,7 +65,7 @@ export class TokenService {
     const user = await userModel.findById(userData._id)
 
     if (!user) {
-      throw ApiError.BadRequest("Неверный токен")
+      throw ApiError.BadRequest("Invalid token")
     }
 
     return user

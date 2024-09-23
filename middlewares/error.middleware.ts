@@ -6,8 +6,6 @@ export default (err: ApiError, req: Request, res: Response, next: Function) => {
   if (err instanceof ApiError) {
     const error = { ...err }
     error.message = error.errorMessage
-    console.log(error.message);
-    console.log({ ...error })
     return res.status(err.status).json({ ...err })
   }
 

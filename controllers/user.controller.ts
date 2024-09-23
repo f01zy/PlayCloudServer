@@ -106,7 +106,7 @@ export class UserController {
 
   public async editBanner(req: Request, res: Response, next: Function) {
     try {
-      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("Файлы не были переданы")
+      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("The files field is required")
 
       const { banner } = req.files
       const { refreshToken } = req.cookies
@@ -121,7 +121,7 @@ export class UserController {
 
   public async editAvatar(req: Request, res: Response, next: Function) {
     try {
-      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("Файлы не были переданы")
+      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("The files field is required")
 
       const { avatar } = req.files
       const { refreshToken } = req.cookies
@@ -139,7 +139,7 @@ export class UserController {
       const { refreshToken } = req.cookies
       const { username } = req.body
 
-      if (!username) throw ApiError.BadRequest("username не был указан")
+      if (!username) throw ApiError.BadRequest("The username field is required")
 
       const errors = validationResult(req)
 

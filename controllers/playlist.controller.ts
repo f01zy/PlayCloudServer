@@ -15,7 +15,9 @@ export class PlaylistController {
     try {
       const { name, description, tracks } = req.body
 
-      if (!name || !description || !tracks) throw ApiError.BadRequest("Аргументы не были указанны")
+      if (!name) throw ApiError.BadRequest("The name field is required")
+      if (!description) throw ApiError.BadRequest("The description field is required")
+      if (!tracks) throw ApiError.BadRequest("The tracks field is required")
 
       const { refreshToken } = req.cookies
 
