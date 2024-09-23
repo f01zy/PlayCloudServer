@@ -120,6 +120,9 @@ export class UserService {
 
   public async editUsername(username: string, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
+    const candidate = await userModel.findOne({ username })
+
+    if (candidate) throw ApiError.BadRequest("A user with this username already exists")
 
     user.username = username
     user.save()
