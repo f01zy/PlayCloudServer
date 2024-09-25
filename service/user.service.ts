@@ -116,6 +116,8 @@ export class UserService {
       if (candidate) {
         throw ApiError.BadRequest("A user with this username already exists")
       }
+
+      user.username = username
     }
 
     user.save()
