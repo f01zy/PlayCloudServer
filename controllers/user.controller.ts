@@ -112,7 +112,7 @@ export class UserController {
 
       const user = await userService.put(files, username, refreshToken)
 
-      return res.json(user)
+      return res.json(await userService.populate(user))
     } catch (e) {
       next(e)
     }
