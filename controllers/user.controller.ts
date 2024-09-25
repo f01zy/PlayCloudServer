@@ -120,10 +120,10 @@ export class UserController {
       const { username, description, links } = req.body
 
       const schema = Joi.object({
-        username: Joi.string().optional(),
-        description: Joi.string().optional(),
-        links: Joi.array().items(Joi.string()).optional(),
-      });
+        username: Joi.string().optional().allow(null, ""),
+        description: Joi.string().optional().allow(null, ""),
+        links: Joi.array().items(Joi.string()).optional().allow(null),
+      })
 
       const { error } = schema.validate({ username, description, links });
 
