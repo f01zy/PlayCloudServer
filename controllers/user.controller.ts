@@ -7,7 +7,7 @@ import { Variables } from "../env/variables.env";
 import { userModel } from "../models/user.model";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
-import { UploadedFile } from "express-fileupload";
+import Joi from "joi";
 
 interface IAuthRequestBody {
   username: string;
@@ -42,6 +42,18 @@ export class UserController {
   public async login(req: Request<{}, {}, Omit<IAuthRequestBody, "username">>, res: Response, next: Function) {
     try {
       const { email, password } = req.body
+
+      const schema = Joi.object({
+        email: Joi.string().required(),
+        password: Joi.string().required(),
+      });
+
+      const { error } = schema.validate({ email, password });
+
+      if (error) {
+        throw ApiError.BadRequest(error.details[0].message)
+      }
+
       const userData = await userService.login(email, password)
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : false })
       return res.json(userData)
@@ -86,18 +98,15 @@ export class UserController {
   public async getUserById(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
     try {
       const { id } = req.params
-
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const redisData = await getDataFromRedis(id)
       if (redisData) return res.json(redisData)
 
       const user = await userModel.findById(id)
-
       if (!user) throw ApiError.NotFound()
 
       await setDataToRedis(id, await userService.populate(user))
-
       return res.json(await getDataFromRedis(id))
     } catch (e) {
       next(e)
@@ -108,9 +117,21 @@ export class UserController {
     try {
       const files = req.files
       const { refreshToken } = req.cookies
-      const { username } = req.body
+      const { username, description, links } = req.body
 
-      const user = await userService.put(files, username, refreshToken)
+      const schema = Joi.object({
+        username: Joi.string().optional(),
+        description: Joi.string().optional(),
+        links: Joi.array().items(Joi.string()).optional(),
+      });
+
+      const { error } = schema.validate({ username, description, links });
+
+      if (error) {
+        throw ApiError.BadRequest(error.details[0].message)
+      }
+
+      const user = await userService.put(files, username, description, links, refreshToken)
 
       return res.json(await userService.populate(user))
     } catch (e) {

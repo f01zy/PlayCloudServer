@@ -9,6 +9,8 @@ const UserSchema = new Schema<IUser>({
   activationLink: { type: String, required: true },
   avatar: { type: Boolean, default: false },
   banner: { type: Boolean, default: false },
+  description: { type: String, default: "" },
+  links: [{ type: String, default: "" }],
   playlists: [{ type: String, default: [], ref: "Playlist" }],
   likes: [{ type: String, default: [], ref: "Music" }],
   tracks: [{ type: String, default: [], ref: "Music" }],

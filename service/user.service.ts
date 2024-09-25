@@ -94,7 +94,7 @@ export class UserService {
     }
   }
 
-  public async put(files: FileArray | null | undefined, username: string | null, refreshToken: string) {
+  public async put(files: FileArray | null | undefined, username: string, description: string, links: Array<string>, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const filesArray = ["avatar", "banner"]
 
@@ -121,6 +121,9 @@ export class UserService {
 
       user.username = username
     }
+
+    if (description) user.description = description
+    if (links) user.links = links
 
     return user.save()
   }

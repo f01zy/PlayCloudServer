@@ -15,15 +15,32 @@ const tokenService = new TokenService()
 const userService = new UserService()
 
 export class MusicService {
+  private async validateFiles(files: UploadedFile[]) {
+    if (!files || files.length < 2) {
+      throw ApiError.BadRequest("Insufficiently loaded files");
+    }
+
+    const imageMIMEtypes = ['image/jpeg', 'image/png'];
+    const audioMIMEtypes = ['audio/mpeg'];
+
+    if (!imageMIMEtypes.includes(files[0].mimetype)) {
+      throw ApiError.BadRequest("files[0] must be an image")
+    }
+
+    if (!audioMIMEtypes.includes(files[1].mimetype)) {
+      throw ApiError.BadRequest("files[1] must be an audio")
+    }
+  }
+
   public async create(files: UploadedFile[], name: string, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
 
     const musicSearch = await musicModel.findOne({ name })
-
     if (musicSearch) throw ApiError.BadRequest("Track already exists")
 
     const musicCreated = await musicModel.create({ author: user._id, name, date: new Date() })
 
+    this.validateFiles(files)
     files[0].mv(path.join('static', "cover", `${musicCreated._id}.jpg`))
     files[1].mv(path.join('static', "music", `${musicCreated._id}.mp3`))
 
@@ -73,7 +90,6 @@ export class MusicService {
     }
 
     await setDataToRedis("music", musicPopulate)
-
     return getDataFromRedis("music")
   }
 
