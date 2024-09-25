@@ -111,6 +111,8 @@ export class UserService {
     }
 
     if (username) {
+      if (username.length < 3) throw ApiError.BadRequest("Username error")
+
       const candidate = await userModel.findOne({ username })
 
       if (candidate) {
