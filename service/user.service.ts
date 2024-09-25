@@ -102,8 +102,11 @@ export class UserService {
       filesArray.map(fileArray => {
         const file = files[fileArray] as UploadedFile
 
+        console.log(file)
+
         if (file) {
           const pathname = path.join('static', fileArray, `${user._id}.jpg`)
+          console.log(pathname)
           file.mv(pathname);
           (user as any)[fileArray] = true
         }
@@ -117,12 +120,12 @@ export class UserService {
         throw ApiError.BadRequest("A user with this username already exists")
       }
 
+      console.log(username)
+
       user.username = username
     }
 
-    user.save()
-
-    return user
+    return user.save()
   }
 
   public async populate(user: Document<unknown, {}, IUser> & IUser) {
