@@ -7,7 +7,7 @@ import { Document } from "mongoose"
 import { IUser } from "../interfaces/user.interface"
 import crypto from "crypto"
 import { Variables } from "../env/variables.env"
-import { UploadedFile } from "express-fileupload"
+import { FileArray, UploadedFile } from "express-fileupload"
 import path from "path"
 import fs from "fs"
 
@@ -94,37 +94,30 @@ export class UserService {
     }
   }
 
-  public async editBanner(banner: UploadedFile, refreshToken: string) {
+  public async put(files: FileArray | null | undefined, username: string | null, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
-    const pathname = path.join("static", "banner", `${user._id}.jpg`)
+    const filesArray = ["avatar", "banner"]
 
-    banner.mv(pathname)
+    if (files) {
+      filesArray.map(fileArray => {
+        const file = files[fileArray] as UploadedFile
 
-    user.banner = true
-    user.save()
+        if (file) {
+          const pathname = path.join('static', fileArray, `${user._id}.jpg`)
+          file.mv(pathname);
+          (user as any)[fileArray] = true
+        }
+      })
+    }
 
-    return user
-  }
+    if (username) {
+      const candidate = await userModel.findOne({ username })
 
-  public async editAvatar(avatar: UploadedFile, refreshToken: string) {
-    const user = await tokenService.getUserByRefreshToken(refreshToken)
-    const pathname = path.join('static', "avatar", `${user._id}.jpg`)
+      if (candidate) {
+        throw ApiError.BadRequest("A user with this username already exists")
+      }
+    }
 
-    avatar.mv(pathname)
-
-    user.avatar = true
-    user.save()
-
-    return user
-  }
-
-  public async editUsername(username: string, refreshToken: string) {
-    const user = await tokenService.getUserByRefreshToken(refreshToken)
-    const candidate = await userModel.findOne({ username })
-
-    if (candidate) throw ApiError.BadRequest("A user with this username already exists")
-
-    user.username = username
     user.save()
 
     return user

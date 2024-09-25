@@ -1,15 +1,14 @@
 import { ValidationError } from "express-validator"
 
-export class ApiError extends Error {
+export class ApiError {
   public status
   public errors
-  public errorMessage
+  public message
 
   constructor(status: number, message: string, errors: ValidationError[] = []) {
-    super(message)
     this.status = status
     this.errors = errors
-    this.errorMessage = message
+    this.message = message
   }
 
   public static UnauthorizedError() {

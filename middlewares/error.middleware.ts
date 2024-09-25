@@ -4,8 +4,6 @@ import { ApiError } from "../exceptions/api.exception";
 export default (err: ApiError, req: Request, res: Response, next: Function) => {
   console.log(err);
   if (err instanceof ApiError) {
-    const error = { ...err }
-    error.message = error.errorMessage
     return res.status(err.status).json({ ...err })
   }
 

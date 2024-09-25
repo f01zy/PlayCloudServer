@@ -104,50 +104,13 @@ export class UserController {
     }
   }
 
-  public async editBanner(req: Request, res: Response, next: Function) {
+  public async put(req: Request, res: Response, next: Function) {
     try {
-      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("The files field is required")
-
-      const { banner } = req.files
-      const { refreshToken } = req.cookies
-
-      const user = await userService.editBanner(banner as UploadedFile, refreshToken)
-
-      return res.json(user)
-    } catch (e) {
-      next(e)
-    }
-  }
-
-  public async editAvatar(req: Request, res: Response, next: Function) {
-    try {
-      if (!req.files || Object.keys(req.files).length === 0) throw ApiError.BadRequest("The files field is required")
-
-      const { avatar } = req.files
-      const { refreshToken } = req.cookies
-
-      const user = await userService.editAvatar(avatar as UploadedFile, refreshToken)
-
-      return res.json(user)
-    } catch (e) {
-      next(e)
-    }
-  }
-
-  public async editUsername(req: Request, res: Response, next: Function) {
-    try {
+      const files = req.files
       const { refreshToken } = req.cookies
       const { username } = req.body
 
-      if (!username) throw ApiError.BadRequest("The username field is required")
-
-      const errors = validationResult(req)
-
-      if (!errors.isEmpty()) {
-        return next(ApiError.BadRequest("Ошибка валидации", errors.array()))
-      }
-
-      const user = await userService.editUsername(username, refreshToken)
+      const user = await userService.put(files, username, refreshToken)
 
       return res.json(user)
     } catch (e) {

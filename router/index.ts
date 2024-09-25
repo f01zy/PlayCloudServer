@@ -18,17 +18,12 @@ router.post("/auth/register",
   body("password").isLength({ min: 8 }),
   userController.register
 )
-router.post("/auth/edit/banner", userController.editBanner)
-router.post("/auth/edit/avatar", userController.editAvatar)
-router.post("/auth/edit/username",
-  body("username").isLength({ min: 3, max: 25 }),
-  userController.editUsername
-)
 router.post("/auth/login", userController.login)
 router.get("/auth/logout", userController.logout)
 router.get("/auth/activate/:link", userController.activate)
 router.get("/auth/refresh", userController.refresh)
 
+router.put("/users", userController.put)
 router.get("/users/:id", userController.getUserById)
 
 router.get("/music/:id", musicController.getOneMusic)
