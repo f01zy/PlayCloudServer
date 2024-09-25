@@ -110,6 +110,8 @@ export class UserController {
       const { refreshToken } = req.cookies
       const { username } = req.body
 
+      console.log(username, files)
+
       const user = await userService.put(files, username, refreshToken)
 
       return res.json(await userService.populate(user))
