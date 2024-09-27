@@ -9,7 +9,7 @@ export const authRouter = Router()
 authRouter.post("/register",
   body("username").isString().isLength({ min: 4, max: 16 }),
   body("email").isEmail(),
-  body("password").isString().isLength({ min: 8 }),
+  body("password").isString().isLength({ min: 8, max: 30 }),
   userController.register
 )
 authRouter.post("/login",

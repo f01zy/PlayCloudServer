@@ -102,9 +102,9 @@ export class UserController {
 
       const files = req.files
       const { refreshToken } = req.cookies
-      const { username, description, links } = req.body
+      const body = req.body
 
-      const user = await userService.put(files, username, description, links, refreshToken)
+      const user = await userService.put(files, body, refreshToken)
 
       return res.json(await userService.populate(user))
     } catch (e) {

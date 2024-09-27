@@ -94,9 +94,13 @@ export class UserService {
     }
   }
 
-  public async put(files: FileArray | null | undefined, username: string, description: string, links: Array<string>, refreshToken: string) {
+  public async put(files: FileArray | null | undefined, body: any, refreshToken: string) {
     const user = await tokenService.getUserByRefreshToken(refreshToken)
     const filesArray = ["avatar", "banner"]
+
+    const username = body.username
+    const description = body.description
+    const links: Array<string> = []
 
     if (files) {
       filesArray.map(fileArray => {
@@ -123,7 +127,20 @@ export class UserService {
     }
 
     if (description) user.description = description
-    if (links) user.links = links
+
+    for (let i = 0; i < 4; i++) {
+      const link = body[`links[${i}]`]
+
+      if (typeof link === "string" && link.trim().length > 0) {
+        links.push(link)
+      } else {
+        break
+      }
+    }
+
+    console.log(links)
+
+    user.links = links
 
     return user.save()
   }
