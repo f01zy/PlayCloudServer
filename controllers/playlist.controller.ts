@@ -5,7 +5,6 @@ import { Types } from "mongoose";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { playlistModel } from "../models/playlist.model";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
-import { UserService } from "../service/user.service";
 import { checkValidation } from '../utils/checkValidation.utils';
 
 const playlistService = new PlaylistService()
@@ -34,11 +33,12 @@ export class PlaylistController {
       const redisData = await getDataFromRedis(id)
       if (redisData) return res.json(redisData)
 
-      const playlist = await playlistModel.findById(id)
+      let playlist = await playlistModel.findById(id)
       if (!playlist) throw ApiError.NotFound()
+      playlist = await playlistService.populate(playlist) as any
 
-      await setDataToRedis(id, await playlistService.populate(playlist))
-      return res.json(await playlistService.populate(playlist))
+      await setDataToRedis(id, playlist)
+      return res.json(playlist)
     } catch (e) {
       next(e)
     }

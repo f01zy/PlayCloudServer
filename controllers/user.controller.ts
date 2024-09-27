@@ -14,10 +14,6 @@ interface IAuthRequestBody {
   password: string;
 }
 
-interface RequestBodyId {
-  id: string,
-}
-
 const userService = new UserService()
 
 export class UserController {
@@ -81,7 +77,7 @@ export class UserController {
     }
   }
 
-  public async getUserById(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
+  public async getUserById(req: Request<{ id: string }, {}, {}>, res: Response, next: Function) {
     try {
       const { id } = req.params
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()

@@ -9,19 +9,11 @@ import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
 import { checkValidation } from '../utils/checkValidation.utils';
 
-interface RequestBodyCreate {
-  name: string
-}
-
-interface RequestBodyId {
-  id: string,
-}
-
 const musicService = new MusicService()
 const tokenService = new TokenService()
 
 export class MusicController {
-  public async create(req: Request<{}, {}, RequestBodyCreate>, res: Response, next: Function) {
+  public async create(req: Request<{}, {}, { name: string }>, res: Response, next: Function) {
     try {
       if (!req.files || Object.keys(req.files).length === 0) return next(ApiError.BadRequest("Файлы не были переданы"))
 
@@ -40,7 +32,7 @@ export class MusicController {
     }
   }
 
-  public async getOneMusic(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
+  public async getOneMusic(req: Request<{ id: string }, {}, {}>, res: Response, next: Function) {
     try {
       const { id } = req.params
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
@@ -48,11 +40,12 @@ export class MusicController {
       const redisMusic = await getDataFromRedis(id)
       if (redisMusic) return res.json(redisMusic)
 
-      const music = await musicModel.findById(id)
+      let music = await musicModel.findById(id)
       if (!music) throw ApiError.NotFound()
+      music = await musicService.populate(music) as any
 
-      await setDataToRedis(id, await musicService.populate(music))
-      return res.json(await musicService.populate(music))
+      await setDataToRedis(id, music)
+      return res.json(music)
     } catch (e) {
       next(e)
     }
@@ -66,7 +59,7 @@ export class MusicController {
     }
   }
 
-  public async listen(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
+  public async listen(req: Request<{}, {}, { id: string }>, res: Response, next: Function) {
     try {
       checkValidation(req)
 
@@ -83,7 +76,7 @@ export class MusicController {
     }
   }
 
-  public async like(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
+  public async like(req: Request<{}, {}, { id: string }>, res: Response, next: Function) {
     try {
       checkValidation(req)
 
