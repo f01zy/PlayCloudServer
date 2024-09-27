@@ -138,8 +138,6 @@ export class UserService {
       }
     }
 
-    console.log(links)
-
     user.links = links
 
     return user.save()
