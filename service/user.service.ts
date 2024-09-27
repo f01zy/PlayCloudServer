@@ -31,7 +31,7 @@ export class UserService {
     const hashPassword = await bcrypt.hash(password, 3)
     const activationLink = crypto.randomBytes(10).toString('hex').slice(0, 10);
 
-    try { await mailService.sendActivationMail(email, Variables.SERVER_URL + "/auth/activate/" + activationLink) } catch { console.log("Error: mail not sended", activationLink) }
+    try { await mailService.sendActivationMail(email, Variables.SERVER_URL + "/auth/activate/" + activationLink) } catch (err) { console.log(err) }
 
     const user = await userModel.create({ username, email, password: hashPassword, activationLink })
 
