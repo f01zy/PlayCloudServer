@@ -17,7 +17,7 @@ export class MusicController {
     try {
       if (!req.files || Object.keys(req.files).length === 0) return next(ApiError.BadRequest("Файлы не были переданы"))
 
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { files } = req.files
       const { name } = req.body
@@ -61,7 +61,7 @@ export class MusicController {
 
   public async listen(req: Request<{}, {}, { id: string }>, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { id } = req.body
       const { refreshToken } = req.cookies
@@ -78,7 +78,7 @@ export class MusicController {
 
   public async like(req: Request<{}, {}, { id: string }>, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { id } = req.body
       const { refreshToken } = req.cookies

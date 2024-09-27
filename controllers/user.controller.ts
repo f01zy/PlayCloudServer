@@ -19,7 +19,7 @@ const userService = new UserService()
 export class UserController {
   public async register(req: Request<{}, {}, IAuthRequestBody>, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { username, email, password } = req.body
       const userData = await userService.register(username, email, password)
@@ -32,7 +32,7 @@ export class UserController {
 
   public async login(req: Request<{}, {}, Omit<IAuthRequestBody, "username">>, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { email, password } = req.body
 
@@ -98,7 +98,7 @@ export class UserController {
 
   public async put(req: Request, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const files = req.files
       const { refreshToken } = req.cookies

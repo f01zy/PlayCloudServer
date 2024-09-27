@@ -12,7 +12,7 @@ const playlistService = new PlaylistService()
 export class PlaylistController {
   public async create(req: Request, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { name, description, tracks } = req.body
       const { refreshToken } = req.cookies
@@ -46,7 +46,7 @@ export class PlaylistController {
 
   public async save(req: Request, res: Response, next: Function) {
     try {
-      checkValidation(req)
+      checkValidation(req, next)
 
       const { id } = req.body
       const { refreshToken } = req.cookies
