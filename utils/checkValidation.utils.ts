@@ -6,6 +6,6 @@ export const checkValidation = async (req: Request) => {
   const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
-    return ApiError.BadRequest(errors.array()[0].msg, errors.array())
+    throw ApiError.BadRequest(errors.array()[0].msg, errors.array())
   }
 }
