@@ -89,11 +89,12 @@ export class UserController {
       const redisData = await getDataFromRedis(id)
       if (redisData) return res.json(redisData)
 
-      const user = await userModel.findById(id)
+      let user = await userModel.findById(id)
       if (!user) throw ApiError.NotFound()
+      user = await userService.populate(user) as any
 
-      await setDataToRedis(id, await userService.populate(user))
-      return res.json(await userService.populate(user))
+      await setDataToRedis(id, user)
+      return res.json(user)
     } catch (e) {
       next(e)
     }
