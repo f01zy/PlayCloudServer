@@ -90,7 +90,7 @@ export class MusicService {
     }
 
     await setDataToRedis("music", musicPopulate)
-    return getDataFromRedis("music")
+    return musicPopulate
   }
 
   public async populate(music: Document<unknown, {}, IMusic> & IMusic) {
