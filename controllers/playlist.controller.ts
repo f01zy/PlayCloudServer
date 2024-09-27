@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import { Request, Response } from "express";
 import { PlaylistService } from "../service/playlist.service";
 import { ApiError } from "../exceptions/api.exception";
@@ -7,28 +6,16 @@ import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { playlistModel } from "../models/playlist.model";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
 import { UserService } from "../service/user.service";
-import { IMusic } from '../interfaces/music.interface';
+import { checkValidation } from '../utils/checkValidation.utils';
 
-const userService = new UserService()
 const playlistService = new PlaylistService()
 
 export class PlaylistController {
   public async create(req: Request, res: Response, next: Function) {
     try {
+      checkValidation(req)
+
       const { name, description, tracks } = req.body
-
-      const schema = Joi.object({
-        name: Joi.string().required(),
-        description: Joi.string().required(),
-        tracks: Joi.array<IMusic>().required(),
-      });
-
-      const { error } = schema.validate({ name, description, tracks });
-
-      if (error) {
-        throw ApiError.BadRequest(error.details[0].message)
-      }
-
       const { refreshToken } = req.cookies
 
       const playlist = await playlistService.create(refreshToken, name, description, tracks)
@@ -51,7 +38,7 @@ export class PlaylistController {
       if (!playlist) throw ApiError.NotFound()
 
       await setDataToRedis(id, await playlistService.populate(playlist))
-      return res.json(await getDataFromRedis(id))
+      return res.json(await playlistService.populate(playlist))
     } catch (e) {
       next(e)
     }
@@ -59,6 +46,8 @@ export class PlaylistController {
 
   public async save(req: Request, res: Response, next: Function) {
     try {
+      checkValidation(req)
+
       const { id } = req.body
       const { refreshToken } = req.cookies
 

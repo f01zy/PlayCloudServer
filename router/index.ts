@@ -13,27 +13,41 @@ const searchController = new SearchController()
 export const router = Router()
 
 router.post("/auth/register",
-  body("username").isLength({ min: 3, max: 25 }),
+  body("username").isString().isLength({ min: 4, max: 16 }),
   body("email").isEmail(),
-  body("password").isLength({ min: 8 }),
+  body("password").isString().isLength({ min: 8 }),
   userController.register
 )
-router.post("/auth/login", userController.login)
+router.post("/auth/login",
+  body("email").isEmail(),
+  body("password").isString(),
+  userController.login
+)
 router.get("/auth/logout", userController.logout)
 router.get("/auth/activate/:link", userController.activate)
 router.get("/auth/refresh", userController.refresh)
 
-router.put("/users", userController.put)
+router.put("/users",
+  body("username").isString().optional().isLength({ min: 4, max: 16 }),
+  body("description").isString().optional().isLength({ max: 200 }),
+  body("links").isArray().optional().custom((value) => { if (value) { return value.every((link: any) => typeof link === 'string') } return true }),
+  userController.put
+)
 router.get("/users/:id", userController.getUserById)
 
 router.get("/music/:id", musicController.getOneMusic)
-router.post("/music/listen", musicController.listen)
-router.post("/music/like", musicController.like)
-router.post("/music", musicController.create)
+router.post("/music/listen", body("id").isString(), musicController.listen)
+router.post("/music/like", body("id").isString(), musicController.like)
+router.post("/music", body("name").isString().isLength({ max: 50 }), musicController.create)
 router.get("/music", musicController.getAllMusic)
 
-router.post("/playlist", playlistController.create)
+router.post("/playlist",
+  body("name").isString().isLength({ max: 50 }),
+  body("description").isString().isLength({ max: 200 }),
+  body("tracks").isArray(),
+  playlistController.create
+)
 router.get("/playlist/:id", playlistController.getOne)
-router.post("/playlist/save", playlistController.save)
+router.post("/playlist/save", body("id").isString(), playlistController.save)
 
 router.get("/search", searchController.search)

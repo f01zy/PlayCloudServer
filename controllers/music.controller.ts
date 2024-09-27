@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import { Request, Response } from "express";
 import { ApiError } from "../exceptions/api.exception";
 import { MusicService } from "../service/music.service";
@@ -8,10 +7,10 @@ import { TokenService } from "../service/token.service";
 import { Types } from "mongoose";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
+import { checkValidation } from '../utils/checkValidation.utils';
 
 interface RequestBodyCreate {
-  name: string,
-  refreshToken: string
+  name: string
 }
 
 interface RequestBodyId {
@@ -26,18 +25,10 @@ export class MusicController {
     try {
       if (!req.files || Object.keys(req.files).length === 0) return next(ApiError.BadRequest("Файлы не были переданы"))
 
+      checkValidation(req)
+
       const { files } = req.files
       const { name } = req.body
-
-      const schema = Joi.object({
-        name: Joi.string().required()
-      });
-
-      const { error } = schema.validate({ name });
-
-      if (error) {
-        throw ApiError.BadRequest(error.details[0].message)
-      }
 
       const { refreshToken } = req.cookies
 
@@ -52,7 +43,6 @@ export class MusicController {
   public async getOneMusic(req: Request<RequestBodyId, {}, {}>, res: Response, next: Function) {
     try {
       const { id } = req.params
-      if (!id) throw ApiError.BadRequest("The id field is required")
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const redisMusic = await getDataFromRedis(id)
@@ -62,8 +52,7 @@ export class MusicController {
       if (!music) throw ApiError.NotFound()
 
       await setDataToRedis(id, await musicService.populate(music))
-
-      return res.json(await getDataFromRedis(id))
+      return res.json(await musicService.populate(music))
     } catch (e) {
       next(e)
     }
@@ -79,10 +68,11 @@ export class MusicController {
 
   public async listen(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
     try {
+      checkValidation(req)
+
       const { id } = req.body
       const { refreshToken } = req.cookies
 
-      if (!id) throw ApiError.BadRequest("The id field is required")
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const user = await musicService.listen(refreshToken, id as any)
@@ -95,10 +85,11 @@ export class MusicController {
 
   public async like(req: Request<{}, {}, RequestBodyId>, res: Response, next: Function) {
     try {
+      checkValidation(req)
+
       const { id } = req.body
       const { refreshToken } = req.cookies
 
-      if (!id) throw ApiError.BadRequest("The id field is required")
       if (!Types.ObjectId.isValid(id)) throw ApiError.NotFound()
 
       const user = await tokenService.getUserByRefreshToken(refreshToken)

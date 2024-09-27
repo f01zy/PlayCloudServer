@@ -1,13 +1,12 @@
 import { ApiError } from "../exceptions/api.exception"
 import { UserService } from "../service/user.service"
-import { validationResult } from "express-validator"
 import { Request, Response } from "express"
 import { Types } from "mongoose";
 import { Variables } from "../env/variables.env";
 import { userModel } from "../models/user.model";
 import { getDataFromRedis } from "../utils/getDataFromRedis.utils";
 import { setDataToRedis } from "../utils/setDataToRedis.utils";
-import Joi from "joi";
+import { checkValidation } from "../utils/checkValidation.utils";
 
 interface IAuthRequestBody {
   username: string;
@@ -24,11 +23,7 @@ const userService = new UserService()
 export class UserController {
   public async register(req: Request<{}, {}, IAuthRequestBody>, res: Response, next: Function) {
     try {
-      const errors = validationResult(req)
-
-      if (!errors.isEmpty()) {
-        return next(ApiError.BadRequest("Ошибка валидации", errors.array()))
-      }
+      checkValidation(req)
 
       const { username, email, password } = req.body
       const userData = await userService.register(username, email, password)
@@ -41,18 +36,9 @@ export class UserController {
 
   public async login(req: Request<{}, {}, Omit<IAuthRequestBody, "username">>, res: Response, next: Function) {
     try {
+      checkValidation(req)
+
       const { email, password } = req.body
-
-      const schema = Joi.object({
-        email: Joi.string().required(),
-        password: Joi.string().required(),
-      });
-
-      const { error } = schema.validate({ email, password });
-
-      if (error) {
-        throw ApiError.BadRequest(error.details[0].message)
-      }
 
       const userData = await userService.login(email, password)
       res.cookie("refreshToken", userData.refreshToken, { maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true, secure: Variables.MODE == "development" ? false : false })
@@ -107,7 +93,7 @@ export class UserController {
       if (!user) throw ApiError.NotFound()
 
       await setDataToRedis(id, await userService.populate(user))
-      return res.json(await getDataFromRedis(id))
+      return res.json(await userService.populate(user))
     } catch (e) {
       next(e)
     }
@@ -115,21 +101,11 @@ export class UserController {
 
   public async put(req: Request, res: Response, next: Function) {
     try {
+      checkValidation(req)
+
       const files = req.files
       const { refreshToken } = req.cookies
       const { username, description, links } = req.body
-
-      const schema = Joi.object({
-        username: Joi.string().optional().allow(null, ""),
-        description: Joi.string().optional().allow(null, ""),
-        links: Joi.array().items(Joi.string()).optional().allow(null),
-      })
-
-      const { error } = schema.validate({ username, description, links });
-
-      if (error) {
-        throw ApiError.BadRequest(error.details[0].message)
-      }
 
       const user = await userService.put(files, username, description, links, refreshToken)
 
