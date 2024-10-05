@@ -18,6 +18,8 @@ export class MailService {
 
   public async sendActivationMail(to: string, link: string): Promise<void> {
     try {
+      console.log("send")
+
       const mail = await this.transporter.sendMail({
         from: process.env.SMTP_USER,
         to,
