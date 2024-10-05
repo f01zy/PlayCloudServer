@@ -16,6 +16,7 @@ import { musicRouter } from "./router/music.router"
 import { playlistRouter } from "./router/playlist.router"
 import { searchRouter } from "./router/search.router"
 import { usersRouter } from "./router/users.router"
+import { MailService } from "./service/mail.service"
 
 export const app = express()
 export const client = createClient({ url: `redis://:playcloud@localhost:6379` }).on("error", error => console.log(error))
@@ -32,6 +33,7 @@ app.use("/api/search", searchRouter)
 app.use("/api/users", usersRouter)
 app.use(errorMiddleware)
 
+const mailService = new MailService()
 const server = http.createServer(app)
 const PORT = Variables.PORT
 
@@ -40,8 +42,10 @@ const start = async () => {
     await client.connect()
     await mongoose.connect(Variables.DATABASE_URL)
 
-    server.listen(PORT, () => {
+    server.listen(PORT, async () => {
       console.log(`[INFO] server started in ${Variables.MODE} mode`);
+
+      await mailService.sendActivationMail("aminovali015@icloud.com", Variables.SERVER_URL + "/auth/activate/" + "activation")
     })
   } catch (e) {
     throw new Error(e as string)
