@@ -8,7 +8,7 @@ export class MailService {
     try {
       const res = await axios.post(url, {
         subject: "Account activation on PlayCloud.",
-        from: "no-reply@playcloud.com",
+        from: "016aminovali@gmail.com",
         to,
         html: `<div><h1>Для активации аккаунта перейдите по ссылке</h1><a href=${link}>Активировать</p></div>`
       }, { headers: { Authorization: Variables.SMTP_API_KEY } })
