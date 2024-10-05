@@ -33,7 +33,6 @@ app.use("/api/search", searchRouter)
 app.use("/api/users", usersRouter)
 app.use(errorMiddleware)
 
-const mailService = new MailService()
 const server = http.createServer(app)
 const PORT = Variables.PORT
 
@@ -44,8 +43,6 @@ const start = async () => {
 
     server.listen(PORT, async () => {
       console.log(`[INFO] server started in ${Variables.MODE} mode`);
-
-      await mailService.sendActivationMail("aminovali015@icloud.com", Variables.SERVER_URL + "/auth/activate/" + "activation")
     })
   } catch (e) {
     throw new Error(e as string)
