@@ -1,42 +1,20 @@
-import nodemailer from "nodemailer"
-import { Variables } from "../env/variables.env"
+import axios from "axios"
+
+const url = "https://api.smtp.bz/v1/smtp/send"
 
 export class MailService {
-  private transporter
-
-  constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: Variables.SMTP_HOST,
-      port: Variables.SMTP_PORT,
-      secure: true,
-      auth: {
-        user: Variables.SMTP_USER,
-        pass: Variables.SMTP_USER_PASSWORD
-      }
-    })
-  }
-
-  public async sendActivationMail(to: string, link: string): Promise<void> {
+  public async sendActivationMail(to: string, link: string) {
     try {
-      console.log("send")
-
-      const mail = await this.transporter.sendMail({
-        from: process.env.SMTP_USER,
+      const res = await axios.post(url, {
+        subject: "Account activation on PlayCloud.",
+        from: "no-reply@playcloud.com",
         to,
-        subject: `Активация аккаунта на PlayCloud`,
-        text: "",
-        html:
-          `
-        <div>
-          <h1>Для активации аккаунта перейдите по ссылке</h1>
-          <a href=${link}>Активировать</p>
-        </div>
-        `
+        html: `<div><h1>Для активации аккаунта перейдите по ссылке</h1><a href=${link}>Активировать</p></div>`
       })
 
-      console.log(mail)
-    } catch (error) {
-      console.log(error)
+      console.log(res.data)
+    } catch (err) {
+      console.log(err)
     }
   }
 }
