@@ -1,4 +1,5 @@
 import axios from "axios"
+import { Variables } from "../env/variables.env"
 
 const url = "https://api.smtp.bz/v1/smtp/send"
 
@@ -10,7 +11,7 @@ export class MailService {
         from: "no-reply@playcloud.com",
         to,
         html: `<div><h1>Для активации аккаунта перейдите по ссылке</h1><a href=${link}>Активировать</p></div>`
-      })
+      }, { headers: { Authorization: Variables.SMTP_API_KEY } })
 
       console.log(res.data)
     } catch (err) {

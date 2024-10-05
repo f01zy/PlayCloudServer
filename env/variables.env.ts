@@ -1,4 +1,6 @@
 export class Variables {
+  public static readonly SMTP_API_KEY: string = process.env.SMTP_API_KEY!
+
   public static readonly JWT_ACCESS_SECRET: string = process.env.JWT_ACCESS_SECRET!
   public static readonly JWT_REFRESH_SECRET: string = process.env.JWT_REFRESH_SECRET!
 
