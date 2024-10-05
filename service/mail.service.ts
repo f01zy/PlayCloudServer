@@ -11,7 +11,7 @@ export class MailService {
         from: "016aminovali@gmail.com",
         to,
         html: `<div><h1>Для активации аккаунта перейдите по ссылке</h1><a href=${link}>Активировать</p></div>`
-      }, { headers: { Authorization: Variables.SMTP_API_KEY } })
+      })
 
       console.log(res.data)
     } catch (err) {
