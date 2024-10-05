@@ -45,7 +45,7 @@ const start = async () => {
     server.listen(PORT, async () => {
       console.log(`[INFO] server started in ${Variables.MODE} mode`);
 
-      await mailService.sendActivationMail("aminovali015@icloud.com", Variables.SERVER_URL + "/auth/activate/" + "activation")
+      await mailService.sendActivationMail("016aminovali@gmail.com", Variables.SERVER_URL + "/auth/activate/" + "activation")
     })
   } catch (e) {
     throw new Error(e as string)
