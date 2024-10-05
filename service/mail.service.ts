@@ -18,7 +18,7 @@ export class MailService {
 
   public async sendActivationMail(to: string, link: string): Promise<void> {
     try {
-      await this.transporter.sendMail({
+      const mail = await this.transporter.sendMail({
         from: process.env.SMTP_USER,
         to,
         subject: `Активация аккаунта на PlayCloud`,
@@ -31,6 +31,8 @@ export class MailService {
         </div>
         `
       })
+
+      console.log(mail)
     } catch (error) {
       console.log(error)
     }
